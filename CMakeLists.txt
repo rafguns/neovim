@@ -83,9 +83,9 @@ endif()
 # have pthread installed even if, for example, the Win32 threading API is found.
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads REQUIRED)
-if(NOT CMAKE_USE_PTHREADS_INIT)
-  message(SEND_ERROR "The pthread library must be installed on your system.")
-endif(NOT CMAKE_USE_PTHREADS_INIT)
+#if(NOT CMAKE_USE_PTHREADS_INIT)
+#  message(SEND_ERROR "The pthread library must be installed on your system.")
+#endif(NOT CMAKE_USE_PTHREADS_INIT)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

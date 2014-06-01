@@ -64,8 +64,10 @@ set(CONV_SRCS
   api/vim.c
   )
 
+if (NOT WIN32)
 set_source_files_properties(
   ${CONV_SRCS} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wconversion")
+endif (NOT WIN32)
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
   if(DEFINED ENV{SANITIZE})
