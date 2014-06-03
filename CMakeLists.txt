@@ -116,7 +116,7 @@ add_subdirectory(test/includes)
 
 find_program(BUSTED_PRG busted)
 
-find_program(MAKE_PRG NAMES gmake make)
+find_program(MAKE_PRG NAMES gmake make mingw32-make)
 if(MAKE_PRG)
   execute_process(
     COMMAND "${MAKE_PRG}" --version
