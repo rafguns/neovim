@@ -33,7 +33,11 @@ endif()
 
 list(APPEND LUAJIT_NAMES luajit-5.1)
 
-find_library(LUAJIT_LIBRARY NAMES luajit-5.1
+if(MINGW)
+    list(APPEND LUAJIT_NAMES libluajit.a)
+endif(mingw)
+
+find_library(LUAJIT_LIBRARY NAMES ${LUAJIT_NAMES}
              PATHS ${PC_LUAJIT_LIBDIR} ${PC_LUAJIT_LIBRARY_DIRS}
              ${LIMIT_SEARCH})
 
