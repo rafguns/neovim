@@ -35,7 +35,7 @@ list(APPEND LUAJIT_NAMES luajit-5.1)
 
 if(MINGW)
     list(APPEND LUAJIT_NAMES libluajit.a)
-endif(mINGW)
+endif(MiNGW)
 
 find_library(LUAJIT_LIBRARY NAMES ${LUAJIT_NAMES}
              PATHS ${PC_LUAJIT_LIBDIR} ${PC_LUAJIT_LIBRARY_DIRS}
