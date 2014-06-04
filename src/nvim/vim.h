@@ -45,7 +45,7 @@ Error: configure did not run properly.Check auto/config.log.
 # define VIMPACKAGE     "vim"
 #endif
 
-#include "nvim/os_unix_defs.h"       /* bring lots of system header files */
+#include "nvim/os.h"       /* bring lots of system header files */
 
 # ifdef HAVE_LOCALE_H
 #  include <locale.h>
