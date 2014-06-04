@@ -66,7 +66,12 @@ include_directories(SYSTEM ${MSGPACK_INCLUDE_DIRS})
 find_package(LuaJit REQUIRED)
 include_directories(SYSTEM ${LUAJIT_INCLUDE_DIRS})
 
-find_package(LibIntl)
+if (WIN32)
+  # In Windows libintl is not optional
+  find_package(LibIntl REQUIRED)
+else()
+  find_package(LibIntl)
+endif()
 if(LibIntl_FOUND)
   include_directories(SYSTEM ${LibIntl_INCLUDE_DIR})
 endif()
