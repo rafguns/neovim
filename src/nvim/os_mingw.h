@@ -48,4 +48,12 @@ typedef uv_uid_t uid_t;
 #  define USR_EXRC_FILE "$HOME/_exrc"
 #endif
 
+
+/*
+ * MAX_PATH for windows should be around 260 chars
+ * libuv sets MAX_PIPENAME as 256, and so do we
+ */
+#define BASENAMELEN    256
+#define TEMPNAMELEN    256
+
 #endif
