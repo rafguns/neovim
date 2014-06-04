@@ -3267,11 +3267,11 @@ char_u *get_mess_lang(void)
   p = (char_u *)get_locale_val(LC_COLLATE);
 #  endif
 # else
-  p = os_getenv((char_u *)"LC_ALL");
+  p = os_getenv("LC_ALL");
   if (p == NULL || *p == NUL) {
-    p = os_getenv((char_u *)"LC_MESSAGES");
+    p = os_getenv("LC_MESSAGES");
     if (p == NULL || *p == NUL)
-      p = os_getenv((char_u *)"LANG");
+      p = os_getenv("LANG");
   }
 # endif
   return p;
