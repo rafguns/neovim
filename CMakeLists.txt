@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.7)
-project (NEOVIM)
+project (NEOVIM C)
 
 set(CMAKE_SYSTEM_PROCESSOR i386)
 set(CMAKE_SYSTEM_LIBRARY_PATH /lib32 /usr/lib32 /usr/local/lib32)
