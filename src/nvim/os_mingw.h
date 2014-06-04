@@ -17,4 +17,16 @@ typedef uv_uid_t uid_t;
 #  define VIMINFO_FILE "$HOME/_nviminfo"
 #endif
 
+#ifndef VIMRC_FILE
+# define VIMRC_FILE     "_nvimrc"
+#endif
+
+#ifndef EXRC_FILE
+# define EXRC_FILE      "_exrc"
+#endif
+
+#ifndef USR_EXRC_FILE
+#  define USR_EXRC_FILE "$HOME/_exrc"
+#endif
+
 #endif
