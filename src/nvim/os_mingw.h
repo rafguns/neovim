@@ -52,4 +52,8 @@ typedef uv_uid_t uid_t;
 #define BASENAMELEN    _MAX_PATH
 #define TEMPNAMELEN    _MAX_PATH
 
+
+#define TEMPDIRNAMES  "$TMP", "$TEMP", "$USERPROFILE"
+
+
 #endif
