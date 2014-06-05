@@ -78,6 +78,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 # Modules used by platform auto-detection
 include(CheckLibraryExists)
+include(cmake/PlatformChecks.cmake)
 
 find_package(LibUV REQUIRED)
 include_directories(SYSTEM ${LIBUV_INCLUDE_DIRS})
