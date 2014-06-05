@@ -62,7 +62,6 @@ set(CONV_SOURCES
   fold.c
   getchar.c
   hardcopy.c
-  if_cscope.c
   indent.c
   indent_c.c
   keymap.c
