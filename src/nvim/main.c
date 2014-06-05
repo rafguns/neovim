@@ -23,7 +23,6 @@
 #include "nvim/fold.h"
 #include "nvim/getchar.h"
 #include "nvim/hashtab.h"
-#include "nvim/if_cscope.h"
 #include "nvim/mark.h"
 #include "nvim/mbyte.h"
 #include "nvim/memline.h"
@@ -846,7 +845,6 @@ void getout(int exitval)
 #if defined(USE_ICONV) && defined(DYNAMIC_ICONV)
   iconv_end();
 #endif
-  cs_end();
   if (garbage_collect_at_exit)
     garbage_collect();
 
