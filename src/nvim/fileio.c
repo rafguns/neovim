@@ -2530,7 +2530,7 @@ buf_write (
   /*
    * Get information about original file (if there is one).
    */
-#if defined(UNIX)
+#if 1 // FIXME: this was UNIX but should be good for windows too
   perm = -1;
   FileInfo file_info_old;
   if (!os_get_file_info((char *)fname, &file_info_old)) {
