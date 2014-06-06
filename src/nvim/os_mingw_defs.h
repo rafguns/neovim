@@ -12,7 +12,7 @@ typedef uv_uid_t uid_t;
 // defs
 
 #ifndef VIMINFO_FILE
-#  define VIMINFO_FILE "$HOME/_nviminfo"
+#  define VIMINFO_FILE "$HOME\\_nviminfo"
 #endif
 
 #ifndef VIMRC_FILE
@@ -20,7 +20,7 @@ typedef uv_uid_t uid_t;
 #endif
 
 #ifndef USR_VIMRC_FILE
-#  define USR_VIMRC_FILE "$HOME/_nvimrc"
+#  define USR_VIMRC_FILE "$HOME\\_nvimrc"
 #endif
 
 #ifndef EXRC_FILE
@@ -28,7 +28,11 @@ typedef uv_uid_t uid_t;
 #endif
 
 #ifndef EVIM_FILE
-# define EVIM_FILE      "$VIMRUNTIME/evim.vim"
+# define EVIM_FILE      "$VIMRUNTIME\\evim.vim"
+#endif
+
+#ifndef SYNTAX_FNAME
+# define SYNTAX_FNAME   "$VIMRUNTIME\\syntax\\%s.vim"
 #endif
 
 #ifndef FILETYPE_FILE
@@ -51,7 +55,7 @@ typedef uv_uid_t uid_t;
 #endif
 
 #ifndef USR_EXRC_FILE
-#  define USR_EXRC_FILE "$HOME/_exrc"
+#  define USR_EXRC_FILE "$HOME\\_exrc"
 #endif
 
 // DFLT_ values Based on Vim DOS values
@@ -75,11 +79,11 @@ typedef uv_uid_t uid_t;
 #endif
 
 #ifdef RUNTIME_GLOBAL
-# define DFLT_RUNTIMEPATH     "~/.nvim," RUNTIME_GLOBAL ",$VIMRUNTIME," \
-  RUNTIME_GLOBAL "/after,~/.nvim/after"
+# define DFLT_RUNTIMEPATH     "~\\.nvim," RUNTIME_GLOBAL ",$VIMRUNTIME," \
+  RUNTIME_GLOBAL "\\after,~\\_nvim/after"
 #else
 # define DFLT_RUNTIMEPATH \
-  "~/.nvim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,~/.nvim/after"
+  "~\\.nvim,$VIM\\vimfiles,$VIMRUNTIME,$VIM\\vimfiles\\after,~\\.nvim\\after"
 #endif
 
 # ifndef DFLT_MAXMEM
