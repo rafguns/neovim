@@ -32,7 +32,6 @@
 #include "nvim/keymap.h"
 #include "nvim/garray.h"
 #include "nvim/option.h"
-#include "nvim/os_unix.h"
 #include "nvim/path.h"
 #include "nvim/regexp.h"
 #include "nvim/screen.h"

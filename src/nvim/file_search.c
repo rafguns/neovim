@@ -54,7 +54,6 @@
 #include "nvim/message.h"
 #include "nvim/misc1.h"
 #include "nvim/misc2.h"
-#include "nvim/os_unix.h"
 #include "nvim/path.h"
 #include "nvim/strings.h"
 #include "nvim/tag.h"

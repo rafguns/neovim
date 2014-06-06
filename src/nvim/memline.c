@@ -57,7 +57,6 @@
 #include "nvim/misc1.h"
 #include "nvim/misc2.h"
 #include "nvim/option.h"
-#include "nvim/os_unix.h"
 #include "nvim/path.h"
 #include "nvim/screen.h"
 #include "nvim/sha256.h"

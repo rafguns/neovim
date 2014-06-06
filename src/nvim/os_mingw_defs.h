@@ -1,7 +1,5 @@
-#ifndef NVIM_OS_MINGW_H
-#define NVIM_OS_MINGW_H
-
-
+#ifndef NVIM_OS_MINGW_DEFS_H
+#define NVIM_OS_MINGW_DEFS_H
 
 #include <uv.h>
 #include <stdio.h>
