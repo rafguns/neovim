@@ -31,7 +31,7 @@ typedef enum {
 } InbufPollResult;
 
 static RBuffer *input_buffer;
-static bool eof = false;
+static bool input_eof = false, started_reading = false;
 
 #ifdef INCLUDE_GENERATED_DECLARATIONS
 # include "os/input.c.generated.h"
