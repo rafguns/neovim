@@ -26,6 +26,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_definitions(-Werror -Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
 if(MINGW)
   add_definitions(-Wno-format)
+  add_definitions(-Wno-unused)
 endif(MINGW)
 
 add_definitions(-DHAVE_CONFIG_H)
