@@ -27,9 +27,9 @@ int os_dirname(char_u *buf, size_t len)
 {
   assert(buf && len);
 
-  int errno;
-  if ((errno = uv_cwd((char *)buf, &len)) != kLibuvSuccess) {
-    vim_strncpy(buf, (char_u *)uv_strerror(errno), len - 1);
+  int errnoval;
+  if ((errnoval = uv_cwd((char *)buf, &len)) != kLibuvSuccess) {
+    vim_strncpy(buf, (char_u *)uv_strerror(errnoval), len - 1);
     return FAIL;
   }
   return OK;
