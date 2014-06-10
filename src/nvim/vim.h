@@ -45,7 +45,7 @@ Error: configure did not run properly.Check auto/config.log.
 # define VIMPACKAGE     "vim"
 #endif
 
-#include "nvim/os.h"       /* bring lots of system header files */
+#include "nvim/platform.h"       /* bring lots of system header files */
 
 # ifdef HAVE_LOCALE_H
 #  include <locale.h>
@@ -1387,5 +1387,13 @@ typedef int VimClipboard;       /* This is required for the prototypes. */
 
 # define SET_NO_HLSEARCH(flag) no_hlsearch = (flag); set_vim_var_nr( \
     VV_HLSEARCH, !no_hlsearch)
+
+#ifdef UNIX
+#include "nvim/os_unix.h"
+#endif
+
+#ifdef WIN32
+#include "nvim/os_mingw.h"
+#endif
 
 #endif /* NVIM_VIM_H */
