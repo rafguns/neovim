@@ -109,6 +109,7 @@ ui_inchar (
   }
 #endif
 
+#ifdef UNIX
   /* If we are going to wait for some time or block... */
   if (wtime == -1 || wtime > 100L) {
     /* ... allow signals to kill us. */
@@ -119,6 +120,7 @@ ui_inchar (
     if (mapped_ctrl_c)
       ctrl_c_interrupts = FALSE;
   }
+#endif
 
 #ifndef NO_CONSOLE
   {
@@ -126,9 +128,11 @@ ui_inchar (
   }
 #endif
 
+#ifdef UNIX
   if (wtime == -1 || wtime > 100L)
     /* block SIGHUP et al. */
     signal_reject_deadly();
+#endif
 
   ctrl_c_interrupts = TRUE;
 

@@ -47,7 +47,9 @@
 #include "nvim/window.h"
 #include "nvim/os/input.h"
 #include "nvim/os/os.h"
+#ifdef UNIX
 #include "nvim/os/signal.h"
+#endif
 
 /* Maximum number of commands from + or -c arguments. */
 #define MAX_ARG_CMDS 10
@@ -2133,7 +2135,9 @@ mainerr (
     char_u *str       /* extra argument or NULL */
 )
 {
+#ifdef UNIX
   signal_stop();              /* kill us with CTRL-C here, if you like */
+#endif
 
   mch_errmsg(longVersion);
   mch_errmsg("\n");
@@ -2178,7 +2182,9 @@ static void usage(void)
     N_("-q [errorfile]  edit file with first error")
   };
 
+#ifdef UNIX
   signal_stop();              /* kill us with CTRL-C here, if you like */
+#endif
 
   mch_msg(longVersion);
   mch_msg(_("\n\nusage:"));

@@ -135,8 +135,10 @@ int os_call_shell(char_u *cmd, ShellOpts opts, char_u *extra_shell_arg)
     settmode(TMODE_COOK);
   }
 
+#ifdef UNIX
   // While the child is running, ignore terminating signals
   signal_reject_deadly();
+#endif
 
   // Create argv for `uv_spawn`
   // TODO(tarruda): we can use a static buffer for small argument vectors. 1024
@@ -449,7 +451,9 @@ static int proc_cleanup_exit(ProcessData *proc_data,
     settmode(TMODE_RAW);
   }
 
+#ifdef UNIX
   signal_accept_deadly();
+#endif
 
   // Release argv memory
   shell_free_argv(proc_opts->args);
