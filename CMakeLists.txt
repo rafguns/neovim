@@ -24,6 +24,9 @@ set(NEOVIM_VERSION_PATCH 0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
+if(WIN32)
+add_definitions(-target i686-windows-msvc)
+endif(WIN32)
 
 option(
   TRAVIS_CI_BUILD "Travis CI build.  Extra compilation flags will be set." OFF)
