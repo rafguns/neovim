@@ -1,5 +1,5 @@
-#ifndef NVIM_OS_H
-#define NVIM_OS_H
+#ifndef NVIM_OS_DEFS_H
+#define NVIM_OS_DEFS_H
 
 #ifdef UNIX
 #include "nvim/os_unix_defs.h"
