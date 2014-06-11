@@ -14,4 +14,10 @@
 
 typedef uv_uid_t uid_t;
 
+
+#ifndef VIMINFO_FILE
+# define VIMINFO_FILE          "$HOME\\_viminfo"
+#endif
+
+
 #endif
