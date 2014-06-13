@@ -742,7 +742,7 @@ void dbg_breakpoint(char_u *name, linenr_T lnum)
 /*
  * Store the current time in "tm".
  */
-void profile_start(proftime_T *tm)
+void profile_start(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   *tm = os_hrtime();
 }
@@ -750,7 +750,7 @@ void profile_start(proftime_T *tm)
 /*
  * Compute the elapsed time from "tm" till now and store in "tm".
  */
-void profile_end(proftime_T *tm)
+void profile_end(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   *tm = os_hrtime() - *tm;
 }
@@ -758,7 +758,7 @@ void profile_end(proftime_T *tm)
 /*
  * Subtract the time "tm2" from "tm".
  */
-void profile_sub(proftime_T *tm, proftime_T *tm2)
+void profile_sub(proftime_T *tm, proftime_T *tm2) FUNC_ATTR_NONNULL_ALL
 {
   *tm -= *tm2;
 }
@@ -770,7 +770,7 @@ void profile_sub(proftime_T *tm, proftime_T *tm2)
 /// @param tm The time to be represented
 /// @return a static string representing `tm` in the
 ///         form "seconds.microseconds".
-const char *profile_msg(proftime_T *tm)
+const char *profile_msg(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   static char buf[50];
 
@@ -782,7 +782,7 @@ const char *profile_msg(proftime_T *tm)
 /*
  * Put the time "msec" past now in "tm".
  */
-void profile_setlimit(long msec, proftime_T *tm)
+void profile_setlimit(long msec, proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   if (msec <= 0) {
     // no limit
@@ -795,7 +795,7 @@ void profile_setlimit(long msec, proftime_T *tm)
 /*
  * Return TRUE if the current time is past "tm".
  */
-int profile_passed_limit(proftime_T *tm)
+int profile_passed_limit(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   if (*tm == 0) {
     // timer was not set
@@ -808,7 +808,7 @@ int profile_passed_limit(proftime_T *tm)
 /*
  * Set the time in "tm" to zero.
  */
-void profile_zero(proftime_T *tm)
+void profile_zero(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   *tm = 0;
 }
@@ -819,7 +819,7 @@ void profile_zero(proftime_T *tm)
 /*
  * Divide the time "tm" by "count" and store in "tm2".
  */
-void profile_divide(proftime_T *tm, int count, proftime_T *tm2)
+void profile_divide(proftime_T *tm, int count, proftime_T *tm2) FUNC_ATTR_NONNULL_ALL
 {
   if (count == 0) {
     profile_zero(tm2);
@@ -837,7 +837,7 @@ static proftime_T prof_wait_time;
 /*
  * Add the time "tm2" to "tm".
  */
-void profile_add(proftime_T *tm, proftime_T *tm2)
+void profile_add(proftime_T *tm, proftime_T *tm2) FUNC_ATTR_NONNULL_ALL
 {
   *tm += *tm2;
 }
@@ -846,6 +846,7 @@ void profile_add(proftime_T *tm, proftime_T *tm2)
  * Add the "self" time from the total time and the children's time.
  */
 void profile_self(proftime_T *self, proftime_T *total, proftime_T *children)
+  FUNC_ATTR_NONNULL_ALL
 {
   /* Check that the result won't be negative.  Can happen with recursive
    * calls. */
@@ -860,7 +861,7 @@ void profile_self(proftime_T *self, proftime_T *total, proftime_T *children)
 /*
  * Get the current waittime.
  */
-void profile_get_wait(proftime_T *tm)
+void profile_get_wait(proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   *tm = prof_wait_time;
 }
@@ -868,7 +869,7 @@ void profile_get_wait(proftime_T *tm)
 /*
  * Subtract the passed waittime since "tm" from "tma".
  */
-void profile_sub_wait(proftime_T *tm, proftime_T *tma)
+void profile_sub_wait(proftime_T *tm, proftime_T *tma) FUNC_ATTR_NONNULL_ALL
 {
   proftime_T tm3 = prof_wait_time;
 
@@ -879,7 +880,7 @@ void profile_sub_wait(proftime_T *tm, proftime_T *tma)
 /*
  * Return TRUE if "tm1" and "tm2" are equal.
  */
-int profile_equal(proftime_T *tm1, proftime_T *tm2)
+int profile_equal(proftime_T *tm1, proftime_T *tm2) FUNC_ATTR_NONNULL_ALL
 {
   return *tm1 == *tm2;
 }
@@ -888,6 +889,7 @@ int profile_equal(proftime_T *tm1, proftime_T *tm2)
  * Return <0, 0 or >0 if "tm1" < "tm2", "tm1" == "tm2" or "tm1" > "tm2"
  */
 int profile_cmp(const proftime_T *tm1, const proftime_T *tm2)
+  FUNC_ATTR_NONNULL_ALL
 {
   return *tm2 - *tm1;
 }

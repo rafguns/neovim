@@ -11608,7 +11608,7 @@ static void f_readfile(typval_T *argvars, typval_T *rettv)
 ///            exactly 2 items
 /// @param[out] tm The proftime_T representation of `arg`
 /// @return OK In case of success, FAIL in case of error
-static int list2proftime(typval_T *arg, proftime_T *tm)
+static int list2proftime(typval_T *arg, proftime_T *tm) FUNC_ATTR_NONNULL_ALL
 {
   if (arg->v_type != VAR_LIST
       || arg->vval.v_list == NULL
@@ -11641,7 +11641,7 @@ static int list2proftime(typval_T *arg, proftime_T *tm)
 ///             one argument it returns the time passed since the argument.
 ///             With two arguments it returns the time passed between
 ///             the two arguments.
-static void f_reltime(typval_T *argvars, typval_T *rettv)
+static void f_reltime(typval_T *argvars, typval_T *rettv) FUNC_ATTR_NONNULL_ALL
 {
   proftime_T res;
   proftime_T start;
@@ -11688,6 +11688,7 @@ static void f_reltime(typval_T *argvars, typval_T *rettv)
 ///         number of seconds followed by a dot, followed by the number
 ///         of microseconds.
 static void f_reltimestr(typval_T *argvars, typval_T *rettv)
+  FUNC_ATTR_NONNULL_ALL
 {
   proftime_T tm;
 
