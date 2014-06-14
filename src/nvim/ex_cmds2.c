@@ -788,7 +788,8 @@ void profile_setlimit(long msec, proftime_T *tm) FUNC_ATTR_NONNULL_ALL
     // no limit
     profile_zero(tm);
   } else {
-    *tm = os_hrtime() + (msec * 1000000L);
+    proftime_T nsec = (proftime_T) msec * 1000000ULL;
+    *tm = os_hrtime() + nsec;
   }
 }
 
