@@ -1194,8 +1194,10 @@ void prof_child_enter(proftime_T *tm /* place to store waittime */
 {
   funccall_T *fc = current_funccal;
 
-  if (fc != NULL && fc->func->uf_profiling)
-    profile_start(&fc->prof_child);
+  if (fc != NULL && fc->func->uf_profiling) {
+    fc->prof_child = profile_start();
+  }
+
   script_prof_save(tm);
 }
 
@@ -1209,10 +1211,13 @@ void prof_child_exit(proftime_T *tm /* where waittime was stored */
   funccall_T *fc = current_funccal;
 
   if (fc != NULL && fc->func->uf_profiling) {
-    profile_end(&fc->prof_child);
-    profile_sub_wait(tm, &fc->prof_child);     /* don't count waiting time */
-    profile_add(&fc->func->uf_tm_children, &fc->prof_child);
-    profile_add(&fc->func->uf_tml_children, &fc->prof_child);
+    fc->prof_child = profile_end(fc->prof_child);
+    // don't count waiting time
+    fc->prof_child = profile_sub_wait(*tm, fc->prof_child);
+    fc->func->uf_tm_children =
+      profile_add(fc->func->uf_tm_children, fc->prof_child);
+    fc->func->uf_tml_children =
+      profile_add(fc->func->uf_tml_children, fc->prof_child);
   }
   script_prof_restore(tm);
 }
@@ -11648,19 +11653,19 @@ static void f_reltime(typval_T *argvars, typval_T *rettv) FUNC_ATTR_NONNULL_ALL
 
   if (argvars[0].v_type == VAR_UNKNOWN) {
     // no arguments: get current time.
-    profile_start(&res);
+    res = profile_start();
   } else if (argvars[1].v_type == VAR_UNKNOWN) {
     if (list2proftime(&argvars[0], &res) == FAIL) {
       return;
     }
-    profile_end(&res);
+    res = profile_end(res);
   } else {
     // two arguments: compute the difference.
     if (list2proftime(&argvars[0], &start) == FAIL
         || list2proftime(&argvars[1], &res) == FAIL) {
       return;
     }
-    profile_sub(&res, &start);
+    res = profile_sub(res, start);
   }
 
   // we have to store the 64-bit proftime_T inside of a list of int's
@@ -11695,7 +11700,7 @@ static void f_reltimestr(typval_T *argvars, typval_T *rettv)
   rettv->v_type = VAR_STRING;
   rettv->vval.v_string = NULL;
   if (list2proftime(&argvars[0], &tm) == OK) {
-    rettv->vval.v_string = (char_u *) xstrdup(profile_msg(&tm));
+    rettv->vval.v_string = (char_u *) xstrdup(profile_msg(tm));
   }
 }
 
@@ -12126,7 +12131,7 @@ static int search_cmn(typval_T *argvars, pos_T *match_pos, int *flagsp)
   }
 
   /* Set the time limit, if there is one. */
-  profile_setlimit(time_limit, &tm);
+  tm = profile_setlimit(time_limit);
 
   /*
    * This function does not accept SP_REPEAT and SP_RETCOUNT flags.
@@ -12427,7 +12432,7 @@ do_searchpair (
   p_cpo = empty_option;
 
   /* Set the time limit, if there is one. */
-  profile_setlimit(time_limit, &tm);
+  tm = profile_setlimit(time_limit);
 
   /* Make two search patterns: start/end (pat2, for in nested pairs) and
    * start/middle/end (pat3, for the top pair). */
@@ -17410,8 +17415,8 @@ static void func_do_profile(ufunc_T *fp)
   if (len == 0)
     len = 1;      /* avoid getting error for allocating zero bytes */
   fp->uf_tm_count = 0;
-  profile_zero(&fp->uf_tm_self);
-  profile_zero(&fp->uf_tm_total);
+  fp->uf_tm_self = profile_zero();
+  fp->uf_tm_total = profile_zero();
 
   if (fp->uf_tml_count == NULL) {
     fp->uf_tml_count = xcalloc(len, sizeof(int));
@@ -17463,8 +17468,8 @@ void func_dump_profile(FILE *fd)
           fprintf(fd, "Called 1 time\n");
         else
           fprintf(fd, "Called %d times\n", fp->uf_tm_count);
-        fprintf(fd, "Total time: %s\n", profile_msg(&fp->uf_tm_total));
-        fprintf(fd, " Self time: %s\n", profile_msg(&fp->uf_tm_self));
+        fprintf(fd, "Total time: %s\n", profile_msg(fp->uf_tm_total));
+        fprintf(fd, " Self time: %s\n", profile_msg(fp->uf_tm_self));
         fprintf(fd, "\n");
         fprintf(fd, "count  total (s)   self (s)\n");
 
@@ -17531,14 +17536,14 @@ static void prof_func_line(
 {
   if (count > 0) {
     fprintf(fd, "%5d ", count);
-    if (prefer_self && profile_equal(total, self))
+    if (prefer_self && profile_equal(*total, *self))
       fprintf(fd, "           ");
     else
-      fprintf(fd, "%s ", profile_msg(total));
-    if (!prefer_self && profile_equal(total, self))
+      fprintf(fd, "%s ", profile_msg(*total));
+    if (!prefer_self && profile_equal(*total, *self))
       fprintf(fd, "           ");
     else
-      fprintf(fd, "%s ", profile_msg(self));
+      fprintf(fd, "%s ", profile_msg(*self));
   } else
     fprintf(fd, "                            ");
 }
@@ -17548,11 +17553,9 @@ static void prof_func_line(
  */
 static int prof_total_cmp(const void *s1, const void *s2)
 {
-  ufunc_T     *p1, *p2;
-
-  p1 = *(ufunc_T **)s1;
-  p2 = *(ufunc_T **)s2;
-  return profile_cmp(&p1->uf_tm_total, &p2->uf_tm_total);
+  ufunc_T *p1 = *(ufunc_T **)s1;
+  ufunc_T *p2 = *(ufunc_T **)s2;
+  return profile_cmp(p1->uf_tm_total, p2->uf_tm_total);
 }
 
 /*
@@ -17560,11 +17563,9 @@ static int prof_total_cmp(const void *s1, const void *s2)
  */
 static int prof_self_cmp(const void *s1, const void *s2)
 {
-  ufunc_T     *p1, *p2;
-
-  p1 = *(ufunc_T **)s1;
-  p2 = *(ufunc_T **)s2;
-  return profile_cmp(&p1->uf_tm_self, &p2->uf_tm_self);
+  ufunc_T *p1 = *(ufunc_T **)s1;
+  ufunc_T *p2 = *(ufunc_T **)s2;
+  return profile_cmp(p1->uf_tm_self, p2->uf_tm_self);
 }
 
 
@@ -17994,8 +17995,8 @@ call_user_func (
     if (fp->uf_profiling
         || (fc->caller != NULL && fc->caller->func->uf_profiling)) {
       ++fp->uf_tm_count;
-      profile_start(&call_start);
-      profile_zero(&fp->uf_tm_children);
+      call_start = profile_start();
+      fp->uf_tm_children = profile_zero();
     }
     script_prof_save(&wait_start);
   }
@@ -18022,13 +18023,16 @@ call_user_func (
   if (do_profiling == PROF_YES && (fp->uf_profiling
                                    || (fc->caller != NULL &&
                                        fc->caller->func->uf_profiling))) {
-    profile_end(&call_start);
-    profile_sub_wait(&wait_start, &call_start);
-    profile_add(&fp->uf_tm_total, &call_start);
-    profile_self(&fp->uf_tm_self, &call_start, &fp->uf_tm_children);
+    call_start = profile_end(call_start);
+    call_start = profile_sub_wait(wait_start, call_start);
+    fp->uf_tm_total = profile_add(fp->uf_tm_total, call_start);
+    fp->uf_tm_self = profile_self(fp->uf_tm_self, call_start,
+        fp->uf_tm_children);
     if (fc->caller != NULL && fc->caller->func->uf_profiling) {
-      profile_add(&fc->caller->func->uf_tm_children, &call_start);
-      profile_add(&fc->caller->func->uf_tml_children, &call_start);
+      fc->caller->func->uf_tm_children =
+        profile_add(fc->caller->func->uf_tm_children, call_start);
+      fc->caller->func->uf_tml_children =
+        profile_add(fc->caller->func->uf_tml_children, call_start);
     }
   }
 
@@ -18391,9 +18395,9 @@ void func_line_start(void *cookie)
     while (fp->uf_tml_idx > 0 && FUNCLINE(fp, fp->uf_tml_idx) == NULL)
       --fp->uf_tml_idx;
     fp->uf_tml_execed = FALSE;
-    profile_start(&fp->uf_tml_start);
-    profile_zero(&fp->uf_tml_children);
-    profile_get_wait(&fp->uf_tml_wait);
+    fp->uf_tml_start = profile_start();
+    fp->uf_tml_children = profile_zero();
+    fp->uf_tml_wait = profile_get_wait(fp->uf_tml_wait);
   }
 }
 
@@ -18420,11 +18424,13 @@ void func_line_end(void *cookie)
   if (fp->uf_profiling && fp->uf_tml_idx >= 0) {
     if (fp->uf_tml_execed) {
       ++fp->uf_tml_count[fp->uf_tml_idx];
-      profile_end(&fp->uf_tml_start);
-      profile_sub_wait(&fp->uf_tml_wait, &fp->uf_tml_start);
-      profile_add(&fp->uf_tml_total[fp->uf_tml_idx], &fp->uf_tml_start);
-      profile_self(&fp->uf_tml_self[fp->uf_tml_idx], &fp->uf_tml_start,
-          &fp->uf_tml_children);
+      fp->uf_tml_start = profile_end(fp->uf_tml_start);
+      fp->uf_tml_start = profile_sub_wait(fp->uf_tml_wait, fp->uf_tml_start);
+      fp->uf_tml_total[fp->uf_tml_idx] =
+        profile_add(fp->uf_tml_total[fp->uf_tml_idx], fp->uf_tml_start);
+      fp->uf_tml_self[fp->uf_tml_idx] =
+        profile_self(fp->uf_tml_self[fp->uf_tml_idx], fp->uf_tml_start,
+          fp->uf_tml_children);
     }
     fp->uf_tml_idx = -1;
   }

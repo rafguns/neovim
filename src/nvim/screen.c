@@ -5432,7 +5432,7 @@ static void start_search_hl(void)
     last_pat_prog(&search_hl.rm);
     search_hl.attr = hl_attr(HLF_L);
     /* Set the time limit to 'redrawtime'. */
-    profile_setlimit(p_rdt, &search_hl.tm);
+    search_hl.tm = profile_setlimit(p_rdt);
   }
 }
 
@@ -5467,7 +5467,7 @@ static void init_search_hl(win_T *wp)
     cur->hl.lnum = 0;
     cur->hl.first_lnum = 0;
     /* Set the time limit to 'redrawtime'. */
-    profile_setlimit(p_rdt, &(cur->hl.tm));
+    cur->hl.tm = profile_setlimit(p_rdt);
     cur = cur->next;
   }
   search_hl.buf = wp->w_buffer;
@@ -5569,7 +5569,7 @@ next_search_hl (
   called_emsg = FALSE;
   for (;; ) {
     /* Stop searching after passing the time limit. */
-    if (profile_passed_limit(&(shl->tm))) {
+    if (profile_passed_limit(shl->tm)) {
       shl->lnum = 0;                    /* no match found in time */
       break;
     }
