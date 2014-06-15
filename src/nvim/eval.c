@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "nvim/assert.h"
 #include "nvim/vim.h"
 #include "nvim/eval.h"
 #include "nvim/buffer.h"
@@ -11601,68 +11602,100 @@ static void f_readfile(typval_T *argvars, typval_T *rettv)
 }
 
 
-/*
- * Convert a List to proftime_T.
- * Return FAIL when there is something wrong.
- */
-static int list2proftime(arg, tm)
-typval_T    *arg;
-proftime_T  *tm;
+/// list2proftime - convert a List to proftime_T
+///
+/// @param arg The input list, must be of type VAR_LIST and have
+///            exactly 2 items
+/// @param[out] tm The proftime_T representation of `arg`
+/// @return OK In case of success, FAIL in case of error
+static int list2proftime(typval_T *arg, proftime_T *tm)
 {
-  long n1, n2;
-  int error = FALSE;
-
-  if (arg->v_type != VAR_LIST || arg->vval.v_list == NULL
-      || arg->vval.v_list->lv_len != 2)
+  if (arg->v_type != VAR_LIST
+      || arg->vval.v_list == NULL
+      || arg->vval.v_list->lv_len != 2) {
     return FAIL;
-  n1 = list_find_nr(arg->vval.v_list, 0L, &error);
-  n2 = list_find_nr(arg->vval.v_list, 1L, &error);
-  tm->tv_sec = n1;
-  tm->tv_usec = n2;
-  return error ? FAIL : OK;
+  }
+
+  int error = false;
+  varnumber_T n1 = list_find_nr(arg->vval.v_list, 0L, &error);
+  varnumber_T n2 = list_find_nr(arg->vval.v_list, 1L, &error);
+  if (error) {
+    return FAIL;
+  }
+
+  // in f_reltime() we split up the 64-bit proftime_T into two 32-bit
+  // values, now we combine them again.
+  union {
+    struct { varnumber_T low, high; } split;
+    proftime_T prof;
+  } u = { .split.high = n1, .split.low = n2 };
+
+  *tm = u.prof;
+
+  return OK;
 }
 
-/*
- * "reltime()" function
- */
+/// f_reltime - return an item that represents a time value
+///
+/// @param[out] rettv Without an argument it returns the current time. With
+///             one argument it returns the time passed since the argument.
+///             With two arguments it returns the time passed between
+///             the two arguments.
 static void f_reltime(typval_T *argvars, typval_T *rettv)
 {
   proftime_T res;
   proftime_T start;
 
   if (argvars[0].v_type == VAR_UNKNOWN) {
-    /* No arguments: get current time. */
+    // no arguments: get current time.
     profile_start(&res);
   } else if (argvars[1].v_type == VAR_UNKNOWN) {
-    if (list2proftime(&argvars[0], &res) == FAIL)
+    if (list2proftime(&argvars[0], &res) == FAIL) {
       return;
+    }
     profile_end(&res);
   } else {
-    /* Two arguments: compute the difference. */
+    // two arguments: compute the difference.
     if (list2proftime(&argvars[0], &start) == FAIL
-        || list2proftime(&argvars[1], &res) == FAIL)
+        || list2proftime(&argvars[1], &res) == FAIL) {
       return;
+    }
     profile_sub(&res, &start);
   }
 
+  // we have to store the 64-bit proftime_T inside of a list of int's
+  // (varnumber_T is defined as int). For all our supported platforms, int's
+  // are at least 32-bits wide. So we'll use two 32-bit values to store it.
+  union {
+    struct { varnumber_T low, high; } split;
+    proftime_T prof;
+  } u = { .prof = res };
+
+  // statically assert that the union type conv will provide the correct
+  // results, if varnumber_T or proftime_T change, the union cast will need
+  // to be revised.
+  STATIC_ASSERT(sizeof(u.prof) == sizeof(u) && sizeof(u.split) == sizeof(u),
+      "type punning will produce incorrect results on this platform");
+
   rettv_list_alloc(rettv);
-  long n1 = res.tv_sec;
-  long n2 = res.tv_usec;
-  list_append_number(rettv->vval.v_list, (varnumber_T)n1);
-  list_append_number(rettv->vval.v_list, (varnumber_T)n2);
+  list_append_number(rettv->vval.v_list, u.split.high);
+  list_append_number(rettv->vval.v_list, u.split.low);
 }
 
-/*
- * "reltimestr()" function
- */
+/// f_reltimestr - return a string that represents the value of {time}
+///
+/// @return The string representation of the argument, the format is the
+///         number of seconds followed by a dot, followed by the number
+///         of microseconds.
 static void f_reltimestr(typval_T *argvars, typval_T *rettv)
 {
   proftime_T tm;
 
   rettv->v_type = VAR_STRING;
   rettv->vval.v_string = NULL;
-  if (list2proftime(&argvars[0], &tm) == OK)
-    rettv->vval.v_string = vim_strsave((char_u *)profile_msg(&tm));
+  if (list2proftime(&argvars[0], &tm) == OK) {
+    rettv->vval.v_string = (char_u *) xstrdup(profile_msg(&tm));
+  }
 }
 
 /*

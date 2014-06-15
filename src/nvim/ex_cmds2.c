@@ -45,6 +45,7 @@
 #include "nvim/window.h"
 #include "nvim/os/os.h"
 #include "nvim/os/shell.h"
+#include "nvim/os/time.h"
 
 
 /* Growarray to store info about already sourced scripts.
@@ -743,7 +744,7 @@ void dbg_breakpoint(char_u *name, linenr_T lnum)
  */
 void profile_start(proftime_T *tm)
 {
-  gettimeofday(tm, NULL);
+  *tm = os_hrtime();
 }
 
 /*
@@ -751,15 +752,7 @@ void profile_start(proftime_T *tm)
  */
 void profile_end(proftime_T *tm)
 {
-  proftime_T now;
-
-  gettimeofday(&now, NULL);
-  tm->tv_usec = now.tv_usec - tm->tv_usec;
-  tm->tv_sec = now.tv_sec - tm->tv_sec;
-  if (tm->tv_usec < 0) {
-    tm->tv_usec += 1000000;
-    --tm->tv_sec;
-  }
+  *tm = os_hrtime() - *tm;
 }
 
 /*
@@ -767,23 +760,22 @@ void profile_end(proftime_T *tm)
  */
 void profile_sub(proftime_T *tm, proftime_T *tm2)
 {
-  tm->tv_usec -= tm2->tv_usec;
-  tm->tv_sec -= tm2->tv_sec;
-  if (tm->tv_usec < 0) {
-    tm->tv_usec += 1000000;
-    --tm->tv_sec;
-  }
+  *tm -= *tm2;
 }
 
-/*
- * Return a string that represents the time in "tm".
- * Uses a static buffer!
- */
-char * profile_msg(proftime_T *tm)
+/// profile_msg - return a string that represents the time in `tm`
+///
+/// @warning Do not modify or free this string, not multithread-safe.
+///
+/// @param tm The time to be represented
+/// @return a static string representing `tm` in the
+///         form "seconds.microseconds".
+const char *profile_msg(proftime_T *tm)
 {
   static char buf[50];
 
-  sprintf(buf, "%3ld.%06ld", (long)tm->tv_sec, (long)tm->tv_usec);
+  sprintf(buf, "%10.6lf", (double)*tm / 1000000000.0);
+
   return buf;
 }
 
@@ -792,15 +784,11 @@ char * profile_msg(proftime_T *tm)
  */
 void profile_setlimit(long msec, proftime_T *tm)
 {
-  if (msec <= 0)     /* no limit */
+  if (msec <= 0) {
+    // no limit
     profile_zero(tm);
-  else {
-    long usec;
-
-    gettimeofday(tm, NULL);
-    usec = (long)tm->tv_usec + (long)msec * 1000;
-    tm->tv_usec = usec % 1000000L;
-    tm->tv_sec += usec / 1000000L;
+  } else {
+    *tm = os_hrtime() + (msec * 1000000L);
   }
 }
 
@@ -809,13 +797,12 @@ void profile_setlimit(long msec, proftime_T *tm)
  */
 int profile_passed_limit(proftime_T *tm)
 {
-  proftime_T now;
+  if (*tm == 0) {
+    // timer was not set
+    return false;
+  }
 
-  if (tm->tv_sec == 0)      /* timer was not set */
-    return FALSE;
-  gettimeofday(&now, NULL);
-  return now.tv_sec > tm->tv_sec
-         || (now.tv_sec == tm->tv_sec && now.tv_usec > tm->tv_usec);
+  return os_hrtime() > *tm;
 }
 
 /*
@@ -823,8 +810,7 @@ int profile_passed_limit(proftime_T *tm)
  */
 void profile_zero(proftime_T *tm)
 {
-  tm->tv_usec = 0;
-  tm->tv_sec = 0;
+  *tm = 0;
 }
 
 
@@ -835,13 +821,11 @@ void profile_zero(proftime_T *tm)
  */
 void profile_divide(proftime_T *tm, int count, proftime_T *tm2)
 {
-  if (count == 0)
+  if (count == 0) {
     profile_zero(tm2);
-  else {
-    double usec = (tm->tv_sec * 1000000.0 + tm->tv_usec) / count;
-
-    tm2->tv_sec = floor(usec / 1000000.0);
-    tm2->tv_usec = vim_round(usec - (tm2->tv_sec * 1000000.0));
+  } else {
+    // TODO(aktau): remove usage of vim_round, round() is part of C99
+    *tm2 = round((double) *tm / (double) count);
   }
 }
 
@@ -855,12 +839,7 @@ static proftime_T prof_wait_time;
  */
 void profile_add(proftime_T *tm, proftime_T *tm2)
 {
-  tm->tv_usec += tm2->tv_usec;
-  tm->tv_sec += tm2->tv_sec;
-  if (tm->tv_usec >= 1000000) {
-    tm->tv_usec -= 1000000;
-    ++tm->tv_sec;
-  }
+  *tm += *tm2;
 }
 
 /*
@@ -870,10 +849,10 @@ void profile_self(proftime_T *self, proftime_T *total, proftime_T *children)
 {
   /* Check that the result won't be negative.  Can happen with recursive
    * calls. */
-  if (total->tv_sec < children->tv_sec
-      || (total->tv_sec == children->tv_sec
-          && total->tv_usec <= children->tv_usec))
+  if (*total < *children) {
     return;
+  }
+
   profile_add(self, total);
   profile_sub(self, children);
 }
@@ -902,7 +881,7 @@ void profile_sub_wait(proftime_T *tm, proftime_T *tma)
  */
 int profile_equal(proftime_T *tm1, proftime_T *tm2)
 {
-  return tm1->tv_usec == tm2->tv_usec && tm1->tv_sec == tm2->tv_sec;
+  return *tm1 == *tm2;
 }
 
 /*
@@ -910,9 +889,7 @@ int profile_equal(proftime_T *tm1, proftime_T *tm2)
  */
 int profile_cmp(const proftime_T *tm1, const proftime_T *tm2)
 {
-  if (tm1->tv_sec == tm2->tv_sec)
-    return tm2->tv_usec - tm1->tv_usec;
-  return tm2->tv_sec - tm1->tv_sec;
+  return *tm2 - *tm1;
 }
 
 static char_u   *profile_fname = NULL;
