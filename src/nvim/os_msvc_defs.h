@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <io.h> // open/close
+#include <fcntl.h>
 
 typedef uv_uid_t uid_t;
 
