@@ -83,15 +83,16 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 endif()
 
 get_directory_property(gen_cdefs COMPILE_DEFINITIONS)
-foreach(gen_cdef ${gen_cdefs})
-  set(gen_cflags "${gen_cflags} -D${gen_cdef}")
+foreach(gen_cdef ${gen_cdefs} DO_NOT_DEFINE_EMPTY_ATTRIBUTES)
+  if(NOT "${gen_cdef}" EQUAL "INCLUDE_GENERATED_DECLARATIONS")
+    list(APPEND gen_cflags "-D${gen_cdef}")
+  endif()
 endforeach()
 
 get_directory_property(gen_includes INCLUDE_DIRECTORIES)
 foreach(gen_include ${gen_includes})
-  set(gen_cflags "${gen_cflags} -I${gen_include}")
+  list(APPEND gen_cflags "-I${gen_include}")
 endforeach()
-set(gen_cflags "${gen_cflags} ${CMAKE_C_FLAGS}")
 
 foreach(sfile ${NEOVIM_SOURCES}
               "${PROJECT_SOURCE_DIR}/src/nvim/regexp_nfa.c"
