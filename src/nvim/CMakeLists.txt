@@ -111,8 +111,8 @@ foreach(sfile ${NEOVIM_SOURCES}
   add_custom_command(
     OUTPUT "${gf1}" "${gf2}"
     COMMAND "${LUA_PRG}" "${HEADER_GENERATOR}"
-                             "${sfile}" "${gf1}" "${gf2}"
-                             "${CMAKE_C_COMPILER} ${gen_cflags} -E"
+                         "${sfile}" "${gf1}" "${gf2}"
+                          ${CMAKE_C_COMPILER} ${gen_cflags} -E ${CMAKE_C_FLAGS}
     DEPENDS "${HEADER_GENERATOR}" "${sfile}"
     )
   list(APPEND NEOVIM_GENERATED_SOURCES "${gf1}")

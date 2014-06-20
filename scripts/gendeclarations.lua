@@ -3,9 +3,13 @@
 local fname = arg[1]
 local static_fname = arg[2]
 local non_static_fname = arg[3]
-local cpp = arg[4]
 
-cpp = cpp:gsub(' %-DINCLUDE_GENERATED_DECLARATIONS ', ' ')
+local cmdarr = {}
+for i = 4,#arg-1 do
+  cmdarr[#cmdarr + 1] = arg[i]
+end
+
+local cflags = arg[#arg]
 
 local lpeg = require('lpeg')
 
@@ -153,7 +157,16 @@ if fname == '--help' then
   os.exit()
 end
 
-local pipe = io.popen(cpp .. ' -DDO_NOT_DEFINE_EMPTY_ATTRIBUTES ' .. fname, 'r')
+shell_escape = function(s)
+  return '"' .. s:gsub('(["\\])', '\\%1') .. '"'
+end
+
+local cmd = ''
+for i, v in ipairs(cmdarr) do
+  cmd = cmd .. ' ' .. shell_escape(v)
+end
+cmd = cmd .. ' ' .. shell_escape(fname) .. ' ' .. cflags
+local pipe = io.popen(cmd, 'r')
 local text = pipe:read('*a')
 if not pipe:close() then
   os.exit(2)
