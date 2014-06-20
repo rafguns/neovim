@@ -153,8 +153,7 @@ if fname == '--help' then
   os.exit()
 end
 
-local cmd = cpp .. ' -DDO_NOT_DEFINE_EMPTY_ATTRIBUTES ' .. fname
-local pipe = io.popen([[cmd]], 'r')
+local pipe = io.popen(cpp .. ' -DDO_NOT_DEFINE_EMPTY_ATTRIBUTES ' .. fname, 'r')
 local text = pipe:read('*a')
 if not pipe:close() then
   os.exit(2)
