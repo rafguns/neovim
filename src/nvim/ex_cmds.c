@@ -1315,10 +1315,12 @@ make_filter_cmd (
 )
 {
   size_t len = STRLEN(cmd) + 3;                        /* "()" + NUL */
-  if (itmp != NULL)
+  if (itmp != NULL) {
     len += STRLEN(itmp) + 9;                    /* " { < " + " } " */
-  if (otmp != NULL)
+  }
+  if (otmp != NULL) {
     len += STRLEN(otmp) + STRLEN(p_srr) + 2;     /* "  " */
+  }
   char_u *buf = xmalloc(len);
 
 #if defined(UNIX)

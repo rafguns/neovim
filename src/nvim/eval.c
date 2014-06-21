@@ -5173,8 +5173,9 @@ static list_T *list_copy(list_T *orig, int deep, int copyID)
   listitem_T  *item;
   listitem_T  *ni;
 
-  if (orig == NULL)
+  if (orig == NULL) {
     return NULL;
+  }
 
   list_T *copy = list_alloc();
   if (copyID != 0) {
@@ -5717,8 +5718,9 @@ static dict_T *dict_copy(dict_T *orig, int deep, int copyID)
   int todo;
   hashitem_T  *hi;
 
-  if (orig == NULL)
+  if (orig == NULL) {
     return NULL;
+  }
 
   dict_T *copy = dict_alloc();
   {
@@ -11808,8 +11810,9 @@ static void f_repeat(typval_T *argvars, typval_T *rettv)
 
     int slen = (int)STRLEN(p);
     int len = slen * n;
-    if (len <= 0)
+    if (len <= 0) {
       return;
+    }
 
     char_u *r = xmallocz(len);
     for (int i = 0; i < n; i++)
