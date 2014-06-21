@@ -4815,8 +4815,9 @@ buf_check_timestamp (
       || *buf->b_p_bt != NUL
       || buf->b_saving
       || busy
-      )
+      ) {
     return 0;
+  }
 
   FileInfo file_info;
   bool file_info_ok;
