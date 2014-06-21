@@ -18,6 +18,7 @@
 #endif
 
 #cmakedefine MSVC
+#cmakedefine MSVC_CLANG
 
 #define _FILE_OFFSET_BITS 64
 #cmakedefine HAVE__NSGETENVIRON

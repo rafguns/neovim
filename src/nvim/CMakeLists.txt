@@ -112,7 +112,7 @@ foreach(sfile ${NEOVIM_SOURCES}
   set(gf3 "${GENERATED_DIR}/${r}.c.preprocessor")
   separate_arguments(ESCAPED_C_FLAGS UNIX_COMMAND ${CMAKE_C_FLAGS})
 
-  if(NOT MSVC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+  if(NOT MSVC OR MSVC_CLANG)
     set(PREPROC_OUTPUT -E -o ${gf3})
   else ()
     set(PREPROC_OUTPUT /P /Fi${gf3})

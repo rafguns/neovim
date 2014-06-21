@@ -23,12 +23,17 @@ set(NEOVIM_VERSION_PATCH 0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(NOT MSVC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+if(MSVC AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(MSVC_CLANG True)
+  message("Building with Clang+MSVC")
+endif()
+
+if(NOT MSVC OR MSVC_CLANG)
 add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
 endif()
 
 if(WIN32)
-  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+  if(MSVC_CLANG)
     set(CMAKE_C_FLAGS "-target i686-windows-msvc ${CMAKE_C_FLAGS}")
     add_definitions(-Wno-deprecated-declarations)
   endif()
