@@ -3,13 +3,8 @@
 local fname = arg[1]
 local static_fname = arg[2]
 local non_static_fname = arg[3]
+local preproc_fname = arg[4]
 
-local cmdarr = {}
-for i = 4,#arg-1 do
-  cmdarr[#cmdarr + 1] = arg[i]
-end
-
-local cflags = arg[#arg]
 
 local lpeg = require('lpeg')
 
@@ -157,20 +152,10 @@ if fname == '--help' then
   os.exit()
 end
 
-shell_escape = function(s)
-  return '"' .. s:gsub('(["\\])', '\\%1') .. '"'
-end
+local preproc_f = io.open(preproc_fname)
+local text = preproc_f:read("*all")
+preproc_f:close()
 
-local cmd = ''
-for i, v in ipairs(cmdarr) do
-  cmd = cmd .. ' ' .. shell_escape(v)
-end
-cmd = cmd .. ' ' .. shell_escape(fname) .. ' ' .. cflags
-local pipe = io.popen(cmd, 'r')
-local text = pipe:read('*a')
-if not pipe:close() then
-  os.exit(2)
-end
 
 local header = [[
 #ifndef DEFINE_FUNC_ATTRIBUTES
@@ -187,7 +172,7 @@ local footer = [[
 local non_static = header
 local static = header
 
-local filepattern = '^# %d+ "[^"]-/?([^"/]+)"'
+local filepattern = '^#%a* %d+ "[^"]-/?([^"/]+)"'
 local curfile
 
 init = 0

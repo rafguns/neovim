@@ -109,11 +109,12 @@ foreach(sfile ${NEOVIM_SOURCES}
   endif()
   set(gf1 "${GENERATED_DIR}/${r}.c.generated.h")
   set(gf2 "${GENERATED_INCLUDES_DIR}/${r}.h.generated.h")
+  set(gf3 "${GENERATED_DIR}/${r}.c.preprocessor")
+  separate_arguments(ESCAPED_C_FLAGS UNIX_COMMAND ${CMAKE_C_FLAGS})
   add_custom_command(
     OUTPUT "${gf1}" "${gf2}"
-    COMMAND "${LUA_PRG}" "${HEADER_GENERATOR}"
-                         "${sfile}" "${gf1}" "${gf2}"
-                          ${CMAKE_C_COMPILER} ${gen_cflags} -E ${CMAKE_C_FLAGS}
+    COMMAND ${CMAKE_C_COMPILER} ${sfile} -o ${gf3} ${gen_cflags} -UINCLUDE_GENERATED_DECLARATIONS -E ${ESCAPED_C_FLAGS}
+    COMMAND "${LUA_PRG}" "${HEADER_GENERATOR}" "${sfile}" "${gf1}" "${gf2}" "${gf3}"
     DEPENDS "${HEADER_GENERATOR}" "${sfile}"
     )
   list(APPEND NEOVIM_GENERATED_SOURCES "${gf1}")
