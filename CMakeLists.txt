@@ -25,7 +25,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
 if(WIN32)
-set(CMAKE_C_FLAGS -target i686-windows-msvc ${CMAKE_C_FLAGS})
+set(CMAKE_C_FLAGS "-target i686-windows-msvc ${CMAKE_C_FLAGS}")
 endif(WIN32)
 
 option(
