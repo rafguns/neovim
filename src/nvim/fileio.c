@@ -2575,7 +2575,6 @@ buf_write (
   /*
    * Get information about original file (if there is one).
    */
-#if defined(UNIX)
   perm = -1;
   FileInfo file_info_old;
   if (!os_get_file_info((char *)fname, &file_info_old)) {
@@ -2600,35 +2599,6 @@ buf_write (
       perm = -1;
     }
   }
-#else /* !UNIX */
-      /*
-       * Check for a writable device name.
-       */
-  c = mch_nodetype(fname);
-  if (c == NODE_OTHER) {
-    errnum = (char_u *)"E503: ";
-    errmsg = (char_u *)_("is not a file or writable device");
-    goto fail;
-  }
-  if (c == NODE_WRITABLE) {
-    device = TRUE;
-    newfile = TRUE;
-    perm = -1;
-  } else {
-    perm = os_getperm(fname);
-    if (perm < 0)
-      newfile = TRUE;
-    else if (os_isdir(fname)) {
-      errnum = (char_u *)"E502: ";
-      errmsg = (char_u *)_("is a directory");
-      goto fail;
-    }
-    if (overwriting) {
-      os_get_file_info((char *)fname, &file_info_old);
-    }
-
-  }
-#endif /* !UNIX */
 
   if (!device && !newfile) {
     /*
