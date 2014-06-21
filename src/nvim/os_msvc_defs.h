@@ -1,11 +1,6 @@
 #ifndef NVIM_OS_WIN_H
 #define NVIM_OS_WIN_H
 
-//
-// Tested on win32 MSVC 2013 using clang
-//
-//
-
 #include <uv.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -15,6 +10,12 @@
 #include <fcntl.h>
 
 typedef uv_uid_t uid_t;
+
+#ifndef MSVC_CLANG
+// MSVC 2013 cl does not have these
+#define restrict __restrict
+#define inline __inline
+#endif
 
 
 #ifndef VIMINFO_FILE
