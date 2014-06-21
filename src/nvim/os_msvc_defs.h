@@ -17,9 +17,48 @@ typedef uv_uid_t uid_t;
 #define inline __inline
 #endif
 
+#define BASENAMELEN    _MAX_PATH
+#define TEMPNAMELEN    _MAX_PATH
+#define TEMPDIRNAMES  "$TMP", "$TEMP", "$USERPROFILE"
 
+//
+// System dependent paths
+//
+//
 #ifndef VIMINFO_FILE
-# define VIMINFO_FILE          "$HOME\\_viminfo"
+# define VIMINFO_FILE	"$HOME\\_viminfo"
+#endif
+
+#ifndef VIMRC_FILE
+# define VIMRC_FILE     "_nvimrc"
+#endif
+
+#ifndef EXRC_FILE
+# define EXRC_FILE 	"_exrc"
+#endif
+
+
+//
+// These could probably be shared
+//
+
+#ifndef INDENT_FILE
+# define INDENT_FILE    "indent.vim"
+#endif
+#ifndef FILETYPE_FILE
+# define FILETYPE_FILE  "filetype.vim"
+#endif
+#ifndef FTPLUGIN_FILE
+# define FTPLUGIN_FILE  "ftplugin.vim"
+#endif
+#ifndef FTPLUGOF_FILE
+# define FTPLUGOF_FILE  "ftplugof.vim"
+#endif
+#ifndef FTOFF_FILE
+# define FTOFF_FILE     "ftoff.vim"
+#endif
+#ifndef INDOFF_FILE
+# define INDOFF_FILE    "indoff.vim"
 #endif
 
 
