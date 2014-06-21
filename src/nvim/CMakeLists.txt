@@ -111,9 +111,15 @@ foreach(sfile ${NEOVIM_SOURCES}
   set(gf2 "${GENERATED_INCLUDES_DIR}/${r}.h.generated.h")
   set(gf3 "${GENERATED_DIR}/${r}.c.preprocessor")
   separate_arguments(ESCAPED_C_FLAGS UNIX_COMMAND ${CMAKE_C_FLAGS})
+
+  if(NOT MSVC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+    set(PREPROC_OUTPUT -E -o ${gf3})
+  else ()
+    set(PREPROC_OUTPUT /P /Fi${gf3})
+  endif()
   add_custom_command(
     OUTPUT "${gf1}" "${gf2}"
-    COMMAND ${CMAKE_C_COMPILER} ${sfile} -o ${gf3} ${gen_cflags} -UINCLUDE_GENERATED_DECLARATIONS -E ${ESCAPED_C_FLAGS}
+    COMMAND ${CMAKE_C_COMPILER} ${sfile} ${PREPROC_OUTPUT} ${gen_cflags} -UINCLUDE_GENERATED_DECLARATIONS ${ESCAPED_C_FLAGS}
     COMMAND "${LUA_PRG}" "${HEADER_GENERATOR}" "${sfile}" "${gf1}" "${gf2}" "${gf3}"
     DEPENDS "${HEADER_GENERATOR}" "${sfile}"
     )
