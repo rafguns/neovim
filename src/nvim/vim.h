@@ -8,9 +8,6 @@
 #ifndef NVIM_VIM_H
 # define NVIM_VIM_H
 
-#include "nvim/memory.h"// for xstrlcpy
-#include "nvim/types.h"
-
 /* Included when ported to cmake */
 /* This is needed to replace TRUE/FALSE macros by true/false from c99 */
 #include <stdbool.h>
@@ -26,6 +23,11 @@
 #ifdef HAVE_CONFIG_H    /* GNU autoconf (or something else) was here */
 # include "auto/config.h"
 # define HAVE_PATHDEF
+
+#include "nvim/os_defs.h"
+
+#include "nvim/memory.h"// for xstrlcpy
+#include "nvim/types.h"
 
 /*
  * Check if configure correctly managed to find sizeof(int).  If this failed,
@@ -45,8 +47,6 @@ Error: configure did not run properly.Check auto/config.log.
 #ifndef VIMPACKAGE
 # define VIMPACKAGE     "vim"
 #endif
-
-#include "nvim/os_defs.h"
 
 # ifdef HAVE_LOCALE_H
 #  include <locale.h>
