@@ -25,7 +25,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
 if(WIN32)
-set(CMAKE_C_FLAGS "-target i686-windows-msvc ${CMAKE_C_FLAGS}")
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_C_FLAGS "-target i686-windows-msvc ${CMAKE_C_FLAGS}")
+    add_definitions(-Wno-deprecated-declarations)
+  endif()
 endif(WIN32)
 
 option(
