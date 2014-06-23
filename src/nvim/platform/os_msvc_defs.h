@@ -12,6 +12,7 @@
 typedef uv_uid_t uid_t;
 
 #define STDOUT_FILENO fileno(stdout)
+#define STDERR_FILENO fileno(stderr)
 
 #ifndef MSVC_CLANG
 // MSVC 2013 cl does not have these
