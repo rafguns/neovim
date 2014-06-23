@@ -108,6 +108,9 @@ typedef uv_uid_t uid_t;
 #ifndef INDOFF_FILE
 # define INDOFF_FILE    "indoff.vim"
 #endif
+#ifndef SYNTAX_FNAME
+# define SYNTAX_FNAME   "$VIMRUNTIME/syntax/%s.vim"
+#endif
 
 
 #endif
