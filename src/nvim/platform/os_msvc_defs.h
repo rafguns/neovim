@@ -15,9 +15,15 @@ typedef uv_uid_t uid_t;
 
 #ifndef MSVC_CLANG
 // MSVC 2013 cl does not have these
-#define restrict __restrict
-#define inline __inline
-#define __func__ __FUNCTION__
+# ifndef restrict
+#  define restrict __restrict
+# endif
+# ifndef inline
+#  define inline __inline
+# endif
+# ifndef __func__
+#  define __func__ __FUNCTION__
+# endif
 #endif
 
 #define BASENAMELEN    _MAX_PATH
