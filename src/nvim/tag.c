@@ -25,7 +25,6 @@
 #include "nvim/ex_getln.h"
 #include "nvim/fileio.h"
 #include "nvim/fold.h"
-#include "nvim/if_cscope.h"
 #include "nvim/mark.h"
 #include "nvim/mbyte.h"
 #include "nvim/message.h"
@@ -140,11 +139,9 @@ static taggy_T ptag_entry = {NULL, {INIT_POS_T(0, 0, 0), 0}, 0, 0};
  * type == DT_LAST:	jump to last match of same tag
  * type == DT_SELECT:	":tselect [tag]", select tag from a list of all matches
  * type == DT_JUMP:	":tjump [tag]", jump to tag or select tag from a list
- * type == DT_CSCOPE:	use cscope to find the tag
  * type == DT_LTAG:	use location list for displaying tag matches
  * type == DT_FREE:	free cached matches
  *
- * for cscope, returns TRUE if we jumped to tag or aborted, FALSE otherwise
  */
 int 
 do_tag (
@@ -230,7 +227,6 @@ do_tag (
     if (*tag != NUL
         && (type == DT_TAG || type == DT_SELECT || type == DT_JUMP
             || type == DT_LTAG
-            || type == DT_CSCOPE
             )) {
       if (g_do_tagpreview != 0) {
         if (ptag_entry.tagname != NULL
@@ -374,7 +370,6 @@ do_tag (
         case DT_FIRST: cur_match = count - 1; break;
         case DT_SELECT:
         case DT_JUMP:
-        case DT_CSCOPE:
         case DT_LAST:  cur_match = MAXCOL - 1; break;
         case DT_NEXT:  cur_match += count; break;
         case DT_PREV:  cur_match -= count; break;
@@ -468,8 +463,6 @@ do_tag (
       } else
         flags = TAG_NOIC;
 
-      if (type == DT_CSCOPE)
-        flags = TAG_CSCOPE;
       if (verbose)
         flags |= TAG_VERBOSE;
       if (find_tags(name, &new_num_matches, &new_matches, flags,
@@ -511,10 +504,7 @@ do_tag (
     } else {
       int ask_for_selection = FALSE;
 
-      if (type == DT_CSCOPE && num_matches > 1) {
-        cs_print_tags();
-        ask_for_selection = TRUE;
-      } else if (type == DT_SELECT ||
+      if (type == DT_SELECT ||
                  (type == DT_JUMP && num_matches > 1))        {
         /*
          * List all the matching tags.
@@ -855,7 +845,6 @@ do_tag (
 
       ic = (matches[cur_match][0] & MT_IC_OFF);
       if (type != DT_SELECT && type != DT_JUMP
-          && type != DT_CSCOPE
           && (num_matches > 1 || ic)
           && !skip_msg) {
         /* Give an indication of the number of matching tags */
