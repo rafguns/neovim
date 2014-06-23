@@ -41,10 +41,10 @@
 #cmakedefine HAVE_LOCALE_H
 #cmakedefine HAVE_LSTAT
 #cmakedefine HAVE_MKDTEMP
-#define HAVE_NL_LANGINFO_CODESET 1
-#define HAVE_NL_MSG_CAT_CNTR 1
+//#define HAVE_NL_LANGINFO_CODESET 1
+//#define HAVE_NL_MSG_CAT_CNTR 1
 #cmakedefine HAVE_OPENDIR
-#define HAVE_OSPEED 1
+//#define HAVE_OSPEED 1
 #cmakedefine HAVE_PUTENV
 #cmakedefine HAVE_PWD_H
 #cmakedefine HAVE_READLINK
