@@ -1370,9 +1370,6 @@ find_tags (
         else {
           /* skip empty and blank lines */
           do {
-            if (use_cscope)
-              eof = cs_fgets(lbuf, LSIZE);
-            else
               eof = vim_fgets(lbuf, LSIZE, fp);
           } while (!eof && vim_isblankline(lbuf));
 
