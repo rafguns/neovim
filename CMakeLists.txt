@@ -33,6 +33,7 @@ add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter -std=gnu99)
 endif()
 
 if(WIN32)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   if(MSVC_CLANG)
     set(CMAKE_C_FLAGS "-target i686-windows-msvc ${CMAKE_C_FLAGS}")
     add_definitions(-Wno-deprecated-declarations)
