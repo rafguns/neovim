@@ -340,8 +340,9 @@ FullName_save (
 {
   char_u      *new_fname = NULL;
 
-  if (fname == NULL)
+  if (fname == NULL) {
     return NULL;
+  }
 
   char_u *buf = xmalloc(MAXPATHL);
 
@@ -1973,7 +1974,7 @@ static int path_get_absolute_path(char_u *fname, char_u *buf, int len, int force
   char_u *p;
   *buf = NUL;
 
-  char relative_directory[len];
+  char *relative_directory = xmalloc(len);
   char *end_of_path = (char *) fname;
 
   // expand it if forced or not an absolute path
@@ -1988,9 +1989,11 @@ static int path_get_absolute_path(char_u *fname, char_u *buf, int len, int force
     }
 
     if (FAIL == path_full_dir_name(relative_directory, (char *) buf, len)) {
+      free(relative_directory);
       return FAIL;
     }
   }
+  free(relative_directory);
   return append_path((char *) buf, (char *) end_of_path, len);
 }
 

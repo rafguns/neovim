@@ -1250,13 +1250,15 @@ static regprog_T *bt_regcomp(char_u *expr, int re_flags)
   regcomp_start(expr, re_flags);
   regcode = JUST_CALC_SIZE;
   regc(REGMAGIC);
-  if (reg(REG_NOPAREN, &flags) == NULL)
+  if (reg(REG_NOPAREN, &flags) == NULL) {
     return NULL;
+  }
 
   /* Small enough for pointer-storage convention? */
 #ifdef SMALL_MALLOC             /* 16 bit storage allocation */
-  if (regsize >= 65536L - 256L)
+  if (regsize >= 65536L - 256L) {
     EMSG_RET_NULL(_("E339: Pattern too long"));
+  }
 #endif
 
   /* Allocate space. */
