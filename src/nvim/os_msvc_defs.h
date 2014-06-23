@@ -11,10 +11,13 @@
 
 typedef uv_uid_t uid_t;
 
+#define STDOUT_FILENO fileno(stdout)
+
 #ifndef MSVC_CLANG
 // MSVC 2013 cl does not have these
 #define restrict __restrict
 #define inline __inline
+#define __func__ __FUNCTION__
 #endif
 
 #define BASENAMELEN    _MAX_PATH
@@ -37,6 +40,17 @@ typedef uv_uid_t uid_t;
 # define EXRC_FILE 	"_exrc"
 #endif
 
+#ifndef EVIM_FILE
+# define EVIM_FILE      "$VIMRUNTIME\\evim.vim"
+#endif
+
+#ifndef USR_VIMRC_FILE
+# define USR_VIMRC_FILE	"$HOME\\_nvimrc"
+#endif
+
+#ifndef USR_EXRC_FILE
+# define USR_EXRC_FILE	"$HOME\\_exrc"
+#endif
 
 //
 // These could probably be shared
