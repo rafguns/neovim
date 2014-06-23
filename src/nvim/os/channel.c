@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "nvim/vim.h"
 #include <uv.h>
 #include <msgpack.h>
 
@@ -12,7 +13,6 @@
 #include "nvim/os/job.h"
 #include "nvim/os/job_defs.h"
 #include "nvim/os/msgpack_rpc.h"
-#include "nvim/vim.h"
 #include "nvim/memory.h"
 #include "nvim/map.h"
 #include "nvim/lib/kvec.h"
