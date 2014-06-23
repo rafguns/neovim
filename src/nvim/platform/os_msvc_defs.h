@@ -27,6 +27,9 @@ typedef uv_uid_t uid_t;
 # endif
 #endif
 
+// access() mode arg
+#define W_OK 2
+
 #define BASENAMELEN    _MAX_PATH
 #define TEMPNAMELEN    _MAX_PATH
 #define TEMPDIRNAMES  "$TMP", "$TEMP", "$USERPROFILE"
