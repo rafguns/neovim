@@ -4661,8 +4661,9 @@ get_reg_contents (
   }
 
   get_yank_register(regname, FALSE);
-  if (y_current->y_array == NULL)
+  if (y_current->y_array == NULL) {
     return NULL;
+  }
 
   /*
    * Compute length of resulting string.

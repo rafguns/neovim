@@ -7404,8 +7404,9 @@ void ExpandOldSetting(int *num_file, char_u ***file)
     /* put string of option value in NameBuff */
     option_value2string(&options[expand_option_idx], expand_option_flags);
     var = NameBuff;
-  } else if (var == NULL)
+  } else if (var == NULL) {
     var = (char_u *)"";
+  }
 
   /* A backslash is required before some characters.  This is the reverse of
    * what happens in do_set(). */
