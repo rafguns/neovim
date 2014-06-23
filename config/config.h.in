@@ -70,7 +70,7 @@
 #cmakedefine HAVE_TERMIO_H
 #define HAVE_TGETENT 1
 #cmakedefine HAVE_UNISTD_H
-#define HAVE_UP_BC_PC 1
+//#define HAVE_UP_BC_PC 1
 #cmakedefine HAVE_UTIME
 #cmakedefine HAVE_UTIME_H
 #cmakedefine HAVE_UTIMES
