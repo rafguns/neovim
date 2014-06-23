@@ -23,7 +23,7 @@ typedef enum {
 } InbufPollResult;
 
 static RStream *read_stream;
-static bool eof = false, started_reading = false;
+static bool input_eof = false, started_reading = false;
 
 #ifdef INCLUDE_GENERATED_DECLARATIONS
 # include "os/input.c.generated.h"
@@ -40,7 +40,7 @@ void input_init()
 // Check if there's pending input
 bool input_ready()
 {
-  return rstream_available(read_stream) > 0 || eof;
+  return rstream_available(read_stream) > 0 || input_eof;
 }
 
 // Listen for input
@@ -140,7 +140,7 @@ static InbufPollResult inbuf_poll(int32_t ms)
   }
 
   if (event_poll(ms)) {
-    return eof && rstream_available(read_stream) == 0 ?
+    return input_eof && rstream_available(read_stream) == 0 ?
       kInputEof :
       kInputAvail;
   }
@@ -176,7 +176,7 @@ static void read_cb(RStream *rstream, void *data, bool at_eof)
       // redirects stdin from /dev/null. Previously, this was done in ui.c
       stderr_switch();
     } else {
-      eof = true;
+      input_eof = true;
     }
   }
 
