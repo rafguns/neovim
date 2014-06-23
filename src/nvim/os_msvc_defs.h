@@ -52,9 +52,43 @@ typedef uv_uid_t uid_t;
 # define USR_EXRC_FILE	"$HOME\\_exrc"
 #endif
 
+#ifndef DFLT_BDIR
+# define DFLT_BDIR	".,c:\\tmp,c:\\temp"	/* default for 'backupdir' */
+#endif
+
+#ifndef DFLT_DIR
+# define DFLT_DIR	".,c:\\tmp,c:\\temp"	/* default for 'directory' */
+#endif
+
+#ifndef DFLT_VDIR
+# define DFLT_VDIR	"$HOME/_nvim/view"	/* default for 'viewdir' */
+#endif
+
+#ifndef DFLT_HELPFILE
+# define DFLT_HELPFILE	"$VIMRUNTIME\\doc\\help.txt"
+#endif
+
+#  ifdef RUNTIME_GLOBAL
+#   define DFLT_RUNTIMEPATH     "$HOME/_nvim," RUNTIME_GLOBAL ",$VIMRUNTIME," \
+  RUNTIME_GLOBAL "/after,~/_nvim/after"
+#  else
+#   define DFLT_RUNTIMEPATH \
+  "$HOME/_nvim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/_nvim/after"
+#  endif
+
+
 //
 // These could probably be shared
 //
+
+# ifndef DFLT_MAXMEM
+#  define DFLT_MAXMEM   (5*1024)         /* use up to 5 Mbyte for a buffer */
+# endif
+# ifndef DFLT_MAXMEMTOT
+#  define DFLT_MAXMEMTOT        (10*1024)    /* use up to 10 Mbyte for Vim */
+# endif
+
+#define DFLT_ERRORFILE          "errors.err"
 
 #ifndef INDENT_FILE
 # define INDENT_FILE    "indent.vim"
