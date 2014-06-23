@@ -193,7 +193,6 @@ do_tag (
   if (type == DT_FREE) {
     /* remove the list of matches */
     FreeWild(num_matches, matches);
-    cs_free_tags();
     num_matches = 0;
     return FALSE;
   }
