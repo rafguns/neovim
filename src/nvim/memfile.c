@@ -884,8 +884,9 @@ static int mf_trans_add(memfile_T *mfp, bhdr_T *hp)
   blocknr_T new_bnum;
   int page_count;
 
-  if (hp->bh_bnum >= 0)                     /* it's already positive */
+  if (hp->bh_bnum >= 0) {                     /* it's already positive */
     return OK;
+  }
 
   NR_TRANS *np = xmalloc(sizeof(NR_TRANS));
 

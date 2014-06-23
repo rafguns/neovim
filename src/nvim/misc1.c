@@ -3287,8 +3287,9 @@ home_replace_save (
 ) FUNC_ATTR_NONNULL_RET
 {
   size_t len = 3;                      /* space for "~/" and trailing NUL */
-  if (src != NULL)              /* just in case */
+  if (src != NULL) {              /* just in case */
     len += STRLEN(src);
+  }
   char_u *dst = xmalloc(len);
   home_replace(buf, src, dst, (int)len, TRUE);
   return dst;

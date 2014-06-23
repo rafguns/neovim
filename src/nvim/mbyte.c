@@ -2922,8 +2922,9 @@ int dbcs_screen_head_off(const char_u *base, const char_u *p)
   if (p <= base
       || (enc_dbcs == DBCS_JPNU && p[-1] == 0x8e)
       || MB_BYTE2LEN(p[-1]) == 1
-      || *p == NUL)
+      || *p == NUL) {
     return 0;
+  }
 
   /* This is slow: need to start at the base and go forward until the
    * byte we are looking for.  Return 1 when we went past it, 0 otherwise.
@@ -2947,8 +2948,9 @@ int utf_head_off(const char_u *base, const char_u *p)
   int c;
   int len;
 
-  if (*p < 0x80)                /* be quick for ASCII */
+  if (*p < 0x80) {                /* be quick for ASCII */
     return 0;
+  }
 
   /* Skip backwards over trailing bytes: 10xx.xxxx
    * Skip backwards again if on a composing char. */
