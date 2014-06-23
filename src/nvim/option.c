@@ -63,7 +63,7 @@
 #include "nvim/cursor_shape.h"
 #include "nvim/move.h"
 #include "nvim/normal.h"
-#include "nvim/os_unix.h"
+#include "nvim/os.h"
 #include "nvim/path.h"
 #include "nvim/regexp.h"
 #include "nvim/screen.h"

@@ -36,7 +36,7 @@
 #include "nvim/normal.h"
 #include "nvim/ops.h"
 #include "nvim/option.h"
-#include "nvim/os_unix.h"
+#include "nvim/os.h"
 #include "nvim/path.h"
 #include "nvim/quickfix.h"
 #include "nvim/screen.h"
