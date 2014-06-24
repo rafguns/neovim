@@ -1,10 +1,9 @@
 #include <stdint.h>
 #include <stdbool.h>
-
-#include <msgpack.h>
+#include "nvim/vim.h"
 
 #include "nvim/os/msgpack_rpc.h"
-#include "nvim/vim.h"
+
 #include "nvim/memory.h"
 
 #define REMOTE_FUNCS_IMPL(t, lt)                                            \

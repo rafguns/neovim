@@ -88,9 +88,8 @@ output = io.open(outputf, 'wb')
 output:write([[
 #include <stdbool.h>
 #include <stdint.h>
-#include <msgpack.h>
-
 #include "nvim/os/msgpack_rpc.h"
+#include <msgpack.h>
 ]])
 
 for i = 1, #headers do
