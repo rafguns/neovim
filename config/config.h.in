@@ -58,6 +58,7 @@
 #cmakedefine HAVE_STRCASECMP
 #cmakedefine HAVE_STRINGS_H
 #cmakedefine HAVE_STRNCASECMP
+#cmakedefine HAVE_STRNICMP
 #cmakedefine HAVE_STROPTS_H 1
 #cmakedefine HAVE_SYS_IOCTL_H
 #cmakedefine HAVE_SYS_PARAM_H
