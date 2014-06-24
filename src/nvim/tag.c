@@ -803,7 +803,6 @@ do_tag (
             tagstack[tagstackidx].fmark = saved_fmark;
             tagstackidx = prevtagstackidx;
           }
-          cs_free_tags();
           jumped_to_tag = TRUE;
           break;
         }
