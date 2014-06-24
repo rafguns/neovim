@@ -4,7 +4,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "nvim/log.h"
 #include "nvim/misc1.h"
