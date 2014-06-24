@@ -25,6 +25,9 @@ typedef uv_uid_t uid_t;
 #define TEMPNAMELEN    _MAX_PATH
 #define TEMPDIRNAMES  "$TMP", "$TEMP", "$USERPROFILE"
 
+// strnicmp is deprecated
+#define strnicmp _strnicmp
+
 //
 // System dependent paths
 //
