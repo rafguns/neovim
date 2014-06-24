@@ -14,21 +14,12 @@ typedef uv_uid_t uid_t;
 #define STDOUT_FILENO fileno(stdout)
 #define STDERR_FILENO fileno(stderr)
 
-#ifndef MSVC_CLANG
-// MSVC 2013 cl does not have these
-# ifndef restrict
-#  define restrict __restrict
-# endif
-# ifndef inline
-#  define inline __inline
-# endif
-# ifndef __func__
-#  define __func__ __FUNCTION__
-# endif
-#endif
-
 // access() mode arg
 #define W_OK 2
+
+// stat() macros
+#define S_ISREG(m) (m && S_IFREG)
+#define S_ISDIR(m) (m && S_IFDIR)
 
 #define BASENAMELEN    _MAX_PATH
 #define TEMPNAMELEN    _MAX_PATH
