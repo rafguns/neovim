@@ -82,7 +82,7 @@ static int selinux_enabled = -1;
 
 
 #ifdef INCLUDE_GENERATED_DECLARATIONS
-# include "os_unix.c.generated.h"
+# include "platform\os_unix.c.generated.h"
 #endif
 static char_u   *oldtitle = NULL;
 static int did_set_title = FALSE;
