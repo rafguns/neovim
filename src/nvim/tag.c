@@ -319,7 +319,6 @@ do_tag (
 
         /* remove the old list of matches */
         FreeWild(num_matches, matches);
-        cs_free_tags();
         num_matches = 0;
         tag_freematch();
         goto end_do_tag;
