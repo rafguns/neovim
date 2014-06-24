@@ -184,9 +184,18 @@ if (UNIX)
   list(APPEND NVIM_LINK_LIBRARIES m)
 endif (UNIX)
 
+if (WIN32)
+  list(APPEND NVIM_LINK_LIBRARIES ws2_32 psapi IPHLPAPI)
+endif (WIN32)
+
 if(NOT DEFINED ENV{SKIP_EXEC})
-  add_executable(nvim ${NEOVIM_GENERATED_SOURCES} ${NEOVIM_SOURCES}
-    ${OS_SOURCES} ${API_SOURCES} ${API_PRIV_SOURCES})
+  if (WIN32)
+    add_executable(nvim WIN32 ${NEOVIM_GENERATED_SOURCES} ${NEOVIM_SOURCES}
+      ${OS_SOURCES} ${API_SOURCES} ${API_PRIV_SOURCES})
+  else()
+    add_executable(nvim ${NEOVIM_GENERATED_SOURCES} ${NEOVIM_SOURCES}
+      ${OS_SOURCES} ${API_SOURCES} ${API_PRIV_SOURCES})
+  endif()
   target_link_libraries(nvim ${NVIM_LINK_LIBRARIES})
   install(TARGETS nvim RUNTIME DESTINATION bin)
 endif()
