@@ -8,6 +8,7 @@
 #include <time.h>
 #include <io.h> // open/close
 #include <fcntl.h>
+#include <curses.h>
 
 typedef uv_uid_t uid_t;
 
@@ -27,6 +28,8 @@ typedef uv_uid_t uid_t;
 
 // strnicmp is deprecated
 #define strnicmp _strnicmp
+// setenv
+#define setenv _putenv_s
 
 //
 // System dependent paths
