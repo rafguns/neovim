@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 #include "nvim/os_defs.h"
-#define inline __inline
 #include <msgpack.h>
 
 #include "nvim/func_attr.h"
