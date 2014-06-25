@@ -107,6 +107,11 @@ list(APPEND NVIM_LINK_LIBRARIES
     m
     ${CMAKE_THREAD_LIBS_INIT})
 
+if(WIN32)
+  # libuv needs these
+  list(APPEND NVIM_LINK_LIBRARIES wsock32 ws2_32 psapi iphlpapi)
+endif(WIN32)
+
 if(NOT DEFINED ENV{SKIP_EXEC})
   add_executable(nvim ${NEOVIM_SOURCES} ${OS_SOURCES} ${API_SOURCES}
     ${API_PRIV_SOURCES})
