@@ -57,6 +57,9 @@
 # ifdef HAVE_TERMCAP_H
 #  include <termcap.h>
 # endif
+# ifdef HAVE_TERM_H
+#  include <term.h>
+# endif
 
 /*
  * A few linux systems define outfuntype in termcap.h to be used as the third

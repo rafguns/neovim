@@ -46,7 +46,7 @@
 //#define HAVE_NL_LANGINFO_CODESET 1
 #define HAVE_NL_MSG_CAT_CNTR 1
 #define HAVE_OPENDIR 1
-#define HAVE_OSPEED 1
+//#define HAVE_OSPEED 1
 #define HAVE_POLL_H 1
 #define HAVE_PUTENV 1
 //#define HAVE_PWD_H 1
@@ -79,12 +79,13 @@
 #define HAVE_SYS_TIME_H 1
 //#define HAVE_SYS_UTSNAME_H 1
 #define HAVE_SYS_WAIT_H 1
-#define HAVE_TERMCAP_H 1
+#define HAVE_TERM_H 1
+//#define HAVE_TERMCAP_H 1
 //#define HAVE_TERMIO_H 1
 //#define HAVE_TERMIOS_H 1
 #define HAVE_TGETENT 1
 #define HAVE_UNISTD_H 1
-#define HAVE_UP_BC_PC 1
+//#define HAVE_UP_BC_PC 1
 #define HAVE_UTIME 1
 #define HAVE_UTIME_H 1
 #define HAVE_UTIMES 1
