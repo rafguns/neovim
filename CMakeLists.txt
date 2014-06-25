@@ -88,7 +88,13 @@ find_package(Threads REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_program(LUA_PRG luajit)
+if(CMAKE_CROSSCOMPILING)
+  # Avoid cross compiled luajit binary
+  find_program(LUA_PRG luajit PATHS ${DEPS_INSTALL_DIR}/host/bin NO_DEFAULT_PATH)
+  find_program(LUA_PRG luajit PATHS ${DEPS_INSTALL_DIR}/host/bin NO_CMAKE_PATH)
+else()
+  find_program(LUA_PRG luajit)
+endif()
 
 # Need a lua interpreter for running the msgapck metadata/dispatch generator
 if(NOT EXISTS ${LUA_PRG})

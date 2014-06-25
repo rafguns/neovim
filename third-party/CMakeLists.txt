@@ -117,6 +117,8 @@ if(USE_BUNDLED_LUAJIT)
                                 BUILDMODE=static
                                 install)
   endif()
+
+  # This builds the TARGET luajit
   ExternalProject_Add(luajit
     PREFIX ${DEPS_BUILD_DIR}
     URL ${LUAJIT_URL}
@@ -134,14 +136,54 @@ if(USE_BUNDLED_LUAJIT)
     BUILD_COMMAND ""
     INSTALL_COMMAND ${LUAJIT_INSTALL_CMD})
   list(APPEND THIRD_PARTY_DEPS luajit)
+
+  # Build the HOST luajit
+  if (CMAKE_CROSSCOMPILING)
+    ExternalProject_Add(luajit-host
+      PREFIX ${DEPS_BUILD_DIR}
+      URL ${LUAJIT_URL}
+      URL_MD5 ${LUAJIT_MD5}
+      DOWNLOAD_DIR ${DEPS_DOWNLOAD_DIR}/luajit-host
+      DOWNLOAD_COMMAND ${CMAKE_COMMAND}
+        -DPREFIX=${DEPS_BUILD_DIR}
+        -DDOWNLOAD_DIR=${DEPS_DOWNLOAD_DIR}/luajit-host
+        -DURL=${LUAJIT_URL}
+        -DEXPECTED_MD5=${LUAJIT_MD5}
+        -DTARGET=luajit-host
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DownloadAndExtractFile.cmake
+      CONFIGURE_COMMAND ""
+      BUILD_IN_SOURCE 1
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ${MAKE_PRG} CC=${HOST_C_COMPILER}
+                                PREFIX=${DEPS_INSTALL_DIR}/host
+                                BUILDMODE=static
+                                install)
+  endif()
+
 endif()
 
 if(USE_BUNDLED_LUAROCKS)
   if(USE_BUNDLED_LUAJIT)
-    list(APPEND LUAROCKS_OPTS
-      --with-lua=${DEPS_INSTALL_DIR}
-      --with-lua-include=${DEPS_INSTALL_DIR}/include/luajit-2.0)
+    if (CMAKE_CROSSCOMPILING)
+      list(APPEND LUAROCKS_OPTS
+        --with-lua=${DEPS_INSTALL_DIR}/host
+        --with-lua-include=${DEPS_INSTALL_DIR}/include/luajit-2.0)
+    else()
+      list(APPEND LUAROCKS_OPTS
+        --with-lua=${DEPS_INSTALL_DIR}
+        --with-lua-include=${DEPS_INSTALL_DIR}/include/luajit-2.0)
+    endif()
   endif()
+
+  # Luarocks must live in the same PREFIX as HOST/luajit
+  if (CMAKE_CROSSCOMPILING)
+    set(LUAROCKS_PREFIX ${DEPS_INSTALL_DIR}/host)
+    set(LUAROCKS_BIN "${DEPS_DIR}/usr/host/bin")
+  else()
+    set(LUAROCKS_PREFIX ${DEPS_INSTALL_DIR})
+    set(LUAROCKS_BIN ${DEPS_BIN_DIR})
+  endif()
+
   ExternalProject_Add(luarocks
     PREFIX ${DEPS_BUILD_DIR}
     URL ${LUAROCKS_URL}
@@ -156,7 +198,7 @@ if(USE_BUNDLED_LUAROCKS)
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DownloadAndExtractFile.cmake
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${DEPS_BUILD_DIR}/src/luarocks/configure
-      --prefix=${DEPS_INSTALL_DIR} --force-config ${LUAROCKS_OPTS}
+      --prefix=${LUAROCKS_PREFIX} --force-config ${LUAROCKS_OPTS}
       --lua-suffix=jit
     BUILD_COMMAND ""
     INSTALL_COMMAND ${MAKE_PRG} bootstrap)
@@ -165,27 +207,27 @@ if(USE_BUNDLED_LUAROCKS)
     add_dependencies(luarocks luajit)
   endif()
 
-  add_custom_command(OUTPUT ${DEPS_BIN_DIR}/moon ${DEPS_BIN_DIR}/moonc
-    COMMAND ${DEPS_BIN_DIR}/luarocks ARGS install moonscript
+  add_custom_command(OUTPUT ${LUAROCKS_BIN}/moon ${LUAROCKS_BIN}/moonc
+    COMMAND ${LUAROCKS_BIN}/luarocks ARGS install moonscript
             --server=http://rocks.moonscript.org
     DEPENDS luarocks)
   add_custom_target(moonscript
-    DEPENDS ${DEPS_BIN_DIR}/moon ${DEPS_BIN_DIR}/moonc)
+    DEPENDS ${LUAROCKS_BIN}/moon ${LUAROCKS_BIN}/moonc)
 
   # Busted doesn't depend on luarocks, but luarocks is unhappy to have two
   # instances running in parallel.  So we depend on moonscript to force it
   # to be serialized.
-  add_custom_command(OUTPUT ${DEPS_BIN_DIR}/busted
-    COMMAND ${DEPS_BIN_DIR}/luarocks ARGS install busted 1.10.0
+  add_custom_command(OUTPUT ${LUAROCKS_BIN}/busted
+    COMMAND ${LUAROCKS_BIN}/luarocks ARGS install busted 1.10.0
             --server=http://rocks.moonscript.org
     DEPENDS moonscript)
   add_custom_target(busted
-    DEPENDS ${DEPS_BIN_DIR}/busted)
+    DEPENDS ${LUAROCKS_BIN}/busted)
 
   # Like busted dependency on moonscript, we add a dependency on busted
   # to serialize the install
   add_custom_command(OUTPUT ${DEPS_LIB_DIR}/luarocks/rocks/lua-cmsgpack
-    COMMAND ${DEPS_BIN_DIR}/luarocks ARGS install lua-cmsgpack
+    COMMAND ${LUAROCKS_BIN}/luarocks ARGS install lua-cmsgpack
     DEPENDS busted)
   add_custom_target(lua-cmsgpack
     DEPENDS ${DEPS_LIB_DIR}/luarocks/rocks/lua-cmsgpack)
@@ -194,7 +236,7 @@ if(USE_BUNDLED_LUAROCKS)
   # normal compilation(even without unit testing) we better add it explicitly.
   # Like before, depend on cmsgpack to ensure serialization of install commands
   add_custom_command(OUTPUT ${DEPS_LIB_DIR}/luarocks/rocks/lpeg
-    COMMAND ${DEPS_BIN_DIR}/luarocks ARGS install lpeg
+    COMMAND ${LUAROCKS_BIN}/luarocks ARGS install lpeg
     DEPENDS lua-cmsgpack)
   add_custom_target(lpeg
     DEPENDS ${DEPS_LIB_DIR}/luarocks/rocks/lpeg)
