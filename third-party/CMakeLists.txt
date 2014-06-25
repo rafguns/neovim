@@ -56,6 +56,10 @@ set(LUAJIT_MD5 f14e9104be513913810cd59c8c658dc0)
 set(LUAROCKS_URL http://github.com/keplerproject/luarocks/archive/v2.1.2.tar.gz)
 set(LUAROCKS_MD5 df591c00a85d51fb754ec08c77896aad)
 
+if (CMAKE_CROSSCOMPILING)
+  set(AUTOCONF_HOST --host=${CROSS_TARGET})
+endif()
+
 if(USE_BUNDLED_LIBUV)
   ExternalProject_Add(libuv
     PREFIX ${DEPS_BUILD_DIR}
@@ -71,7 +75,7 @@ if(USE_BUNDLED_LIBUV)
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DownloadAndExtractFile.cmake
     CONFIGURE_COMMAND sh ${DEPS_BUILD_DIR}/src/libuv/autogen.sh &&
       ${DEPS_BUILD_DIR}/src/libuv/configure --with-pic --disable-shared
-        --prefix=${DEPS_INSTALL_DIR} CC=${CMAKE_C_COMPILER}
+        --prefix=${DEPS_INSTALL_DIR} ${AUTOCONF_HOST} CC=${CMAKE_C_COMPILER}
     INSTALL_COMMAND ${MAKE_PRG} install)
   list(APPEND THIRD_PARTY_DEPS libuv)
 endif()
@@ -90,12 +94,29 @@ if(USE_BUNDLED_MSGPACK)
       -DTARGET=msgpack
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DownloadAndExtractFile.cmake
     CONFIGURE_COMMAND ${DEPS_BUILD_DIR}/src/msgpack/configure --disable-shared
-       --with-pic --prefix=${DEPS_INSTALL_DIR} CC=${CMAKE_C_COMPILER}
+    --with-pic --prefix=${DEPS_INSTALL_DIR} ${AUTOCONF_HOST} CC=${CMAKE_C_COMPILER}
     INSTALL_COMMAND ${MAKE_PRG} install)
   list(APPEND THIRD_PARTY_DEPS msgpack)
 endif()
 
 if(USE_BUNDLED_LUAJIT)
+  if (CMAKE_CROSSCOMPILING)
+	  set(LUAJIT_INSTALL_CMD ${MAKE_PRG} HOST_CC=${HOST_C_COMPILER}
+            HOST_CFLAGS=${HOST_C_FLAGS}
+            HOSTLINK=${HOST_EXE_LINKER}
+            HOST_LDFLAGS=${HOST_EXE_LINKER_FLAGS}
+            TARGET_SYS=${CMAKE_SYSTEM_NAME}
+            CROSS=${CROSS_TARGET}-
+            PREFIX=${DEPS_INSTALL_DIR}
+            BUILDMODE=static
+            FILE_T=luajit.exe
+            install)
+  else()
+    set(LUAJIT_INSTALL_CMD ${MAKE_PRG} CC=${CMAKE_C_COMPILER}
+                                PREFIX=${DEPS_INSTALL_DIR}
+                                BUILDMODE=static
+                                install)
+  endif()
   ExternalProject_Add(luajit
     PREFIX ${DEPS_BUILD_DIR}
     URL ${LUAJIT_URL}
@@ -111,10 +132,7 @@ if(USE_BUNDLED_LUAJIT)
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE 1
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${MAKE_PRG} CC=${CMAKE_C_COMPILER}
-                                PREFIX=${DEPS_INSTALL_DIR}
-                                BUILDMODE=static
-                                install)
+    INSTALL_COMMAND ${LUAJIT_INSTALL_CMD})
   list(APPEND THIRD_PARTY_DEPS luajit)
 endif()
 
