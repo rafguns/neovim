@@ -11,14 +11,14 @@ set(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
 set(CMAKE_RC_COMPILER i686-w64-mingw32-windres)
 
 # here is the target environment located
-set(CMAKE_FIND_ROOT_PATH  /usr/i686-w64-mingw32)
+set(CMAKE_FIND_ROOT_PATH  /usr/i686-w64-mingw32/sys-root/mingw)
 
 # adjust the default behaviour of the FIND_XXX() commands:
 # search headers and libraries in the target environment, search 
 # programs in the host environment
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(CROSS_TARGET i686-w64-mingw32)
 
@@ -28,4 +28,9 @@ set(HOST_C_COMPILER cc)
 set(HOST_C_FLAGS -m32)
 set(HOST_EXE_LINKER ld)
 set(HOST_EXE_LINKER_FLAGS -m32)
+
+
+# Neovim specific options
+
+set(LIBUV_USE_STATIC TRUE)
 
