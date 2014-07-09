@@ -42,6 +42,8 @@ list(REMOVE_ITEM NEOVIM_SOURCES ${to_remove})
 
 if (UNIX)
   list(APPEND NEOVIM_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/os/deprecated/os_unix.c)
+else()
+  list(APPEND NEOVIM_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/os/deprecated/dummy.c)
 endif()
 
 # Handle legacy files that don't yet pass -Wconversion.
