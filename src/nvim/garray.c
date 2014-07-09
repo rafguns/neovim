@@ -202,7 +202,7 @@ void ga_append(garray_T *gap, char c)
   GA_APPEND(char, gap, c);
 }
 
-#if defined(UNIX) || defined(WIN3264) || defined(PROTO)
+#if defined(UNIX) || defined(WIN32) || defined(PROTO)
 
 /// Append the text in "gap" below the cursor line and clear "gap".
 ///
