@@ -75,7 +75,7 @@ static int selinux_enabled = -1;
 
 
 #ifdef INCLUDE_GENERATED_DECLARATIONS
-# include "os_unix.c.generated.h"
+# include "os/deprecated/os_unix.c.generated.h"
 #endif
 
 void mch_init(void)

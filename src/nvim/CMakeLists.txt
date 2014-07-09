@@ -17,11 +17,13 @@ include_directories(${GENERATED_INCLUDES_DIR})
 
 file(MAKE_DIRECTORY ${GENERATED_DIR})
 file(MAKE_DIRECTORY ${GENERATED_DIR}/os)
+file(MAKE_DIRECTORY ${GENERATED_DIR}/os/deprecated)
 file(MAKE_DIRECTORY ${GENERATED_DIR}/api)
 file(MAKE_DIRECTORY ${GENERATED_DIR}/api/private)
 file(MAKE_DIRECTORY ${GENERATED_DIR}/msgpack_rpc)
 file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR})
 file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR}/os)
+file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR}/os/deprecated)
 file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR}/api)
 file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR}/api/private)
 file(MAKE_DIRECTORY ${GENERATED_INCLUDES_DIR}/msgpack_rpc)
@@ -37,6 +39,10 @@ foreach(sfile ${NEOVIM_SOURCES})
 endforeach()
 
 list(REMOVE_ITEM NEOVIM_SOURCES ${to_remove})
+
+if (UNIX)
+  list(APPEND NEOVIM_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/os/deprecated/os_unix.c)
+endif()
 
 # Handle legacy files that don't yet pass -Wconversion.
 set(CONV_SOURCES
@@ -71,7 +77,7 @@ set(CONV_SOURCES
   normal.c
   ops.c
   option.c
-  os_unix.c
+  os/deprecated/os_unix.c
   path.c
   popupmnu.c
   quickfix.c

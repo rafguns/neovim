@@ -1,16 +1,10 @@
-#ifndef NVIM_OS_UNIX_H
-#define NVIM_OS_UNIX_H
+#ifndef NVIM_OS_DEPRECATED_H
+#define NVIM_OS_DEPRECATED_H
 
-#include "nvim/types.h"  // for vim_acl_T
-#include "nvim/os/shell.h"
+// FIXME: By release day this file should not be here anymore
 
-/* Values returned by mch_nodetype() */
-#define NODE_NORMAL     0       /* file or directory, check with os_isdir()*/
-#define NODE_WRITABLE   1       /* something we can write to (character
-                                   device, fifo, socket, ..) */
-#define NODE_OTHER      2       /* non-writable thing (e.g., block device) */
-
-#ifdef INCLUDE_GENERATED_DECLARATIONS
-# include "os_unix.h.generated.h"
+#ifdef UNIX
+#include "nvim/os/deprecated/os_unix.h"
 #endif
-#endif  // NVIM_OS_UNIX_H
+
+#endif
