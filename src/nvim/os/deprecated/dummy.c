@@ -5,6 +5,8 @@
 
 #include <stdbool.h>
 #include "nvim/vim.h"
+#include "nvim/api/private/handle.h"
+#include "nvim/os/time.h"
 
 void mch_restore_title(int which)
 {
@@ -26,6 +28,8 @@ int mch_nodetype(char_u *name)
 
 void mch_early_init()
 {
+  handle_init();
+  time_init();
 }
 
 void mch_exit(int r)
