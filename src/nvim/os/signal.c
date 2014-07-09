@@ -39,9 +39,13 @@ void signal_init(void)
   uv_signal_init(uv_default_loop(), &squit);
   uv_signal_init(uv_default_loop(), &sterm);
   uv_signal_start(&sint, signal_cb, SIGINT);
+#ifdef SIGPIPE
   uv_signal_start(&spipe, signal_cb, SIGPIPE);
+#endif
   uv_signal_start(&shup, signal_cb, SIGHUP);
+#ifdef SIGQUIT
   uv_signal_start(&squit, signal_cb, SIGQUIT);
+#endif
   uv_signal_start(&sterm, signal_cb, SIGTERM);
   if (!embedded_mode) {
     // TODO(tarruda): There must be an API function for resizing window
@@ -96,12 +100,16 @@ static char * signal_name(int signum)
     case SIGPWR:
       return "SIGPWR";
 #endif
+#ifdef SIGPIPE
     case SIGPIPE:
       return "SIGPIPE";
+#endif
     case SIGTERM:
       return "SIGTERM";
+#ifdef SIGQUIT
     case SIGQUIT:
       return "SIGQUIT";
+#endif
     case SIGHUP:
       return "SIGHUP";
     default:
@@ -152,11 +160,15 @@ static void on_signal_event(Event event)
       ml_sync_all(false, false);
       break;
 #endif
+#ifdef SIGPIPE
     case SIGPIPE:
       // Ignore
       break;
+#endif
     case SIGTERM:
+#ifdef SIGQUIT
     case SIGQUIT:
+#endif
     case SIGHUP:
       if (!rejecting_deadly) {
         deadly_signal(signum);
