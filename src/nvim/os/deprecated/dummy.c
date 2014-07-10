@@ -7,6 +7,8 @@
 #include "nvim/vim.h"
 #include "nvim/api/private/handle.h"
 #include "nvim/os/time.h"
+#include "nvim/os/event.h"
+#include "nvim/term.h"
 
 void mch_restore_title(int which)
 {
@@ -38,6 +40,16 @@ void mch_exit(int r)
 
 void mch_init()
 {
+  Columns = 80;
+  Rows = 24;
+
+  out_flush();
+
+#ifdef MACOS_CONVERT
+  mac_conv_init();
+#endif
+
+  event_init();
 }
 
 void mch_setmouse(int on)
