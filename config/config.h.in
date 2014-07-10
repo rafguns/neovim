@@ -39,7 +39,9 @@
 #cmakedefine HAVE_NL_LANGINFO_CODESET
 #cmakedefine HAVE_NL_MSG_CAT_CNTR
 #cmakedefine HAVE_OPENDIR
-//#define HAVE_OSPEED 1
+#ifndef WIN32
+#define HAVE_OSPEED 1
+#endif
 #cmakedefine HAVE_PUTENV
 #cmakedefine HAVE_PWD_H
 #cmakedefine HAVE_READLINK
@@ -62,7 +64,9 @@
 #cmakedefine HAVE_TERMCAP_H
 #cmakedefine HAVE_TERMIOS_H
 #cmakedefine HAVE_TERMIO_H
+#ifndef WIN32
 #define HAVE_TGETENT 1
+#endif
 #cmakedefine HAVE_UNISTD_H
 //#define HAVE_UP_BC_PC 1
 #cmakedefine HAVE_UTIME
