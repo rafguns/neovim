@@ -70,8 +70,14 @@ int mch_get_shellsize()
   return FAIL;
 }
 
+/*
+ * Write s[len] to the screen.
+ */
 void mch_write(char_u *s, int len)
 {
+  ignored = (int)write(1, (char *)s, len);
+  if (p_wd)             /* Unix is too fast, slow down a bit more */
+    os_microdelay(p_wd, false);
 }
 
 void mch_settitle(char_u *title, char_u *icon)
@@ -113,16 +119,3 @@ uid_t getuid(void)
   return -1;
 }
 
-void fill_input_buf(int x)
-{
-}
-
-int input_available(void)
-{
-  return false;
-}
-
-int read_from_input_buf(char_u *buf, long maxlen)
-{
-  return 0;
-}
