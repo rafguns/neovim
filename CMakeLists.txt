@@ -92,8 +92,10 @@ if(NOT _FORTIFY_SOURCE_ACCEPTABLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1")
 endif()
 
-add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter
+if (NOT MSVC)
+  add_definitions(-Wall -Wextra -pedantic -Wno-unused-parameter
     -Wstrict-prototypes -std=gnu99)
+endif()
 if (MINGW)
   # Use POSIX compatible stdio in Mingw
   add_definitions(-D__USE_MINGW_ANSI_STDIO)

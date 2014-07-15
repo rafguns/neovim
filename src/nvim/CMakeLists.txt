@@ -101,8 +101,10 @@ foreach(sfile ${CONV_SOURCES})
   endif()
 endforeach()
 
-set_source_files_properties(
-  ${CONV_SOURCES} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wno-conversion")
+if(NOT MSVC)
+  set_source_files_properties(
+    ${CONV_SRCS} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wconversion")
+endif()
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
   if(DEFINED ENV{SANITIZE})
