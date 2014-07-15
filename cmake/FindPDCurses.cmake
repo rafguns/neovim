@@ -13,7 +13,7 @@ find_path(PDCurses_INCLUDE_DIR
 )
 
 find_library(PDCurses_LIBRARY
-    NAMES pdcurses libpdcurses.a
+    NAMES pdcurses libpdcurses.a curses
 )
 
 if (PDCurses_INCLUDE_DIR)
