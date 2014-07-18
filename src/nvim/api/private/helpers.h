@@ -31,7 +31,7 @@
 
 #define STRING_OBJ(s) ((Object) {                                             \
   .type = kObjectTypeString,                                                  \
-  .data.string = s                                                            \
+  .data.string = {.size = s.size, .data = s.data}                             \
   })
 
 #define BUFFER_OBJ(s) ((Object) {                                             \
@@ -51,7 +51,7 @@
 
 #define ARRAY_OBJ(a) ((Object) {                                              \
   .type = kObjectTypeArray,                                                   \
-  .data.array = a                                                             \
+  .data.array = {.items = a.items, .size = a.size}                            \
   })
 
 #define DICTIONARY_OBJ(d) ((Object) {                                         \
