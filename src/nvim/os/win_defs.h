@@ -1,6 +1,8 @@
 #ifndef NEOVIM_OS_WIN_DEFS_H
 #define NEOVIM_OS_WIN_DEFS_H
 
+#include "auto/config.h"
+
 // winsock2.h must be before windows.h - or so says Mingw
 #include <winsock2.h>
 #include <windows.h>
