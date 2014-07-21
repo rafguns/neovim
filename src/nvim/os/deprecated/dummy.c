@@ -34,8 +34,40 @@ void mch_early_init()
   time_init();
 }
 
+// FIXME: this is missing some bits from os_unix
 void mch_exit(int r)
 {
+  exiting = TRUE;
+
+  event_teardown();
+
+  {
+    settmode(TMODE_COOK);
+    mch_restore_title(3);       /* restore xterm title and icon name */
+
+    /* Stop termcap: May need to check for T_CRV response, which
+     * requires RAW mode. */
+    stoptermcap();
+
+    /* Cursor may have been switched off without calling starttermcap()
+     * when doing "vim -u vimrc" and vimrc contains ":q". */
+    if (full_screen)
+      cursor_on();
+  }
+  out_flush();
+  ml_close_all(TRUE);           /* remove all memfiles */
+
+#ifdef MACOS_CONVERT
+  mac_conv_cleanup();
+#endif
+
+
+
+#ifdef EXITFREE
+  free_all_mem();
+#endif
+
+  exit(r);
 }
 
 void mch_init()
