@@ -10,7 +10,12 @@ set(DEPS_BUILD_DIR "${DEPS_DIR}/build")
 set(DEPS_INSTALL_DIR "${DEPS_DIR}/usr")
 set(DEPS_BIN_DIR "${DEPS_INSTALL_DIR}/bin")
 
-list(APPEND CMAKE_PREFIX_PATH ${DEPS_INSTALL_DIR})
+if (CMAKE_CROSSCOMPILING)
+  list(APPEND CMAKE_FIND_ROOT_PATH ${DEPS_INSTALL_DIR})
+  list(APPEND CMAKE_PREFIX_PATH ${DEPS_DIR}/host/bin)
+else()
+  list(APPEND CMAKE_PREFIX_PATH ${DEPS_INSTALL_DIR})
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   # CMake tries to treat /sw and /opt/local as extension of the system path, but
