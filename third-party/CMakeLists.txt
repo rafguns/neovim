@@ -197,6 +197,22 @@ if(USE_BUNDLED_LIBUV)
     # Build libuv for the target
     set(LIBUV_CONFIGURE_COMMAND ${LIBUV_CFGCMD_UNIX} --host=${CROSS_TARGET})
     BuildLibUv(libuv)
+  elseif(WIN32 AND MSVC)
+
+    find_package(PythonInterp 2.6 REQUIRED)
+    if (NOT PYTHONINTERP_FOUND OR PYTHON_VERSION_MAJOR GREATER 2)
+      message(FATAL_ERROR "Python2 is required to build libuv on windows, use -DPYTHON_EXECUTABLE to set a python interpreter")
+    endif()
+
+    # FIXME: by default this creates Debug builds
+    set(LIBUV_CONFIGURE_COMMAND "")
+    set(LIBUV_BUILD_COMMAND set PYTHON=${PYTHON_EXECUTABLE} COMMAND ${DEPS_BUILD_DIR}/src/libuv/vcbuild.bat static)
+    set(LIBUV_INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory ${DEPS_INSTALL_DIR}/lib
+	    COMMAND ${CMAKE_COMMAND} -E copy ${DEPS_BUILD_DIR}/src/libuv/Debug/lib/libuv.lib ${DEPS_INSTALL_DIR}/lib
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${DEPS_INSTALL_DIR}/include
+	    COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPS_BUILD_DIR}/src/libuv/include ${DEPS_INSTALL_DIR}/include)
+ 
+    BuildLibUv(libuv)
   endif()
 
   list(APPEND THIRD_PARTY_DEPS libuv)
@@ -243,6 +259,14 @@ if(USE_BUNDLED_MSGPACK)
       -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN}
       # Hack to avoid -rdynamic in Mingw
       -DCMAKE_SHARED_LIBRARY_LINK_C_FLAGS="")
+  elseif(WIN32 AND MSVC)
+    # Same as UNIX without fPIC
+    set(MSGPACK_CONFIGURE_COMMAND cmake ${DEPS_BUILD_DIR}/src/msgpack
+           -DMSGPACK_ENABLE_CXX=OFF
+           -DMSGPACK_BUILD_TESTS=OFF
+           -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+           -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+           "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_COMPILER_ARG1} -fPIC")
   endif()
   BuildMsgpack(msgpack)
 
@@ -294,6 +318,18 @@ if(USE_BUNDLED_LUAJIT)
               HOST_LDFLAGS=${HOST_EXE_LINKER_FLAGS}
               FILE_T=luajit.exe
               INSTALL_TSYMNAME=luajit.exe)
+    BuildLuaJit(luajit)
+  elseif(WIN32 AND MSVC)
+    set(LUAJIT_CONFIGURE_COMMAND "")
+    set(LUAJIT_BUILD_COMMAND cd src && msvcbuild)
+    set(LUAJIT_INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory ${DEPS_INSTALL_DIR}/bin
+	    COMMAND ${CMAKE_COMMAND} -E copy ${DEPS_BUILD_DIR}/src/luajit/src/luajit.exe ${DEPS_INSTALL_DIR}/bin
+	    COMMAND ${CMAKE_COMMAND} -E copy ${DEPS_BUILD_DIR}/src/luajit/src/lua51.dll ${DEPS_INSTALL_DIR}/bin
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${DEPS_INSTALL_DIR}/lib
+	    COMMAND ${CMAKE_COMMAND} -E copy ${DEPS_BUILD_DIR}/src/luajit/src/lua51.lib ${DEPS_INSTALL_DIR}/lib
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${DEPS_INSTALL_DIR}/include/luajit-2.0
+	    # FIXME: Copy only the necessary headers, but cmake does not accept wildcards
+	    COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPS_BUILD_DIR}/src/luajit/src/ ${DEPS_INSTALL_DIR}/include/luajit-2.0)
     BuildLuaJit(luajit)
   endif()
 
