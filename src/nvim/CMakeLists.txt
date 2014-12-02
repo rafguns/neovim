@@ -228,4 +228,6 @@ if(NOT DEFINED ENV{SKIP_UNITTEST})
 endif()
 
 add_subdirectory(po)
-add_subdirectory(tui)
+if (NOT WIN32)
+  add_subdirectory(tui)
+endif()

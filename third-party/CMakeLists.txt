@@ -106,7 +106,7 @@ if(USE_BUNDLED_LIBUNIBILIUM)
   list(APPEND THIRD_PARTY_DEPS libunibilium)
 endif()
 
-if(USE_BUNDLED_LIBTERMKEY)
+if(USE_BUNDLED_LIBTERMKEY AND WIN32)
   ExternalProject_Add(libtermkey
     PREFIX ${DEPS_BUILD_DIR}
     URL ${LIBTERMKEY_URL}
@@ -131,7 +131,7 @@ if(USE_BUNDLED_LIBTERMKEY)
   add_dependencies(libtermkey libunibilium)
 endif()
 
-if(USE_BUNDLED_LIBTICKIT)
+if(USE_BUNDLED_LIBTICKIT AND WIN32)
   ExternalProject_Add(libtickit
     PREFIX ${DEPS_BUILD_DIR}
     URL ${LIBTICKIT_URL}

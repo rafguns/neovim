@@ -154,7 +154,7 @@ size_t input_enqueue(String keys)
 
 void input_done(void)
 {
-  eof = true;
+  input_eof = true;
 }
 
 static bool input_poll(int ms)
@@ -179,7 +179,7 @@ static InbufPollResult inbuf_poll(int ms)
     return kInputAvail;
   }
 
-  return eof ? kInputEof : kInputNone;
+  return input_eof ? kInputEof : kInputNone;
 }
 
 static void process_interrupts(void)

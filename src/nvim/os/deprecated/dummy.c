@@ -8,7 +8,6 @@
 #include "nvim/api/private/handle.h"
 #include "nvim/os/time.h"
 #include "nvim/os/event.h"
-#include "nvim/term.h"
 
 void mch_restore_title(int which)
 {
@@ -42,19 +41,8 @@ void mch_exit(int r)
   event_teardown();
 
   {
-    settmode(TMODE_COOK);
     mch_restore_title(3);       /* restore xterm title and icon name */
-
-    /* Stop termcap: May need to check for T_CRV response, which
-     * requires RAW mode. */
-    stoptermcap();
-
-    /* Cursor may have been switched off without calling starttermcap()
-     * when doing "vim -u vimrc" and vimrc contains ":q". */
-    if (full_screen)
-      cursor_on();
   }
-  out_flush();
   ml_close_all(TRUE);           /* remove all memfiles */
 
 #ifdef MACOS_CONVERT
@@ -75,7 +63,7 @@ void mch_init()
   Columns = 80;
   Rows = 24;
 
-  out_flush();
+  ui_flush();
 
 #ifdef MACOS_CONVERT
   mac_conv_init();
@@ -100,16 +88,6 @@ void mch_set_shellsize()
 int mch_get_shellsize()
 {
   return FAIL;
-}
-
-/*
- * Write s[len] to the screen.
- */
-void mch_write(char_u *s, int len)
-{
-  ignored = (int)write(1, (char *)s, len);
-  if (p_wd)             /* Unix is too fast, slow down a bit more */
-    os_microdelay(p_wd, false);
 }
 
 void mch_settitle(char_u *title, char_u *icon)
