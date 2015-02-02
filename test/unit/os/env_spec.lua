@@ -3,6 +3,7 @@ local helpers = require('test.unit.helpers')
 local cimport = helpers.cimport
 local internalize = helpers.internalize
 local eq = helpers.eq
+local neq = helpers.neq
 local ffi = helpers.ffi
 local lib = helpers.lib
 local cstr = helpers.cstr
@@ -12,6 +13,7 @@ local NULL = helpers.NULL
 require('lfs')
 
 local env = cimport('./src/nvim/os/os.h')
+local vim_env = cimport('./src/nvim/misc1.h')
 
 describe('env function', function()
   function os_setenv(name, value, override)
@@ -127,4 +129,60 @@ describe('env function', function()
       eq(hostname, (ffi.string(hostname_buf)))
     end)
   end)
+
+  function vim_setenv(name, value)
+    return env.vim_setenv((to_cstr(name)), (to_cstr(value)))
+  end
+
+  describe('vim_setenv', function()
+    it('converts $VIMRUNTIME to $NVIMRUNTIME', function()
+      local old_runtime = os.getenv('NVIMRUNTIME')
+      local runtime = 'set as VIMRUNTIME'
+      vim_setenv('VIMRUNTIME', runtime)
+      eq(nil, os.getenv('VIMRUNTIME'))
+      eq(runtime, os.getenv('NVIMRUNTIME'))
+      -- Restore
+      vim_setenv('NVIMRUNTIME', old_runtime)
+    end)
+
+    it('converts $VIM to $NVIM', function()
+      local old_nvim = os.getenv('NVIM')
+      local nvim = 'set as VIM'
+      vim_setenv('VIM', nvim)
+      eq(nil, os.getenv('VIM'))
+      eq(nvim, os.getenv('NVIM'))
+      -- Restore
+      vim_setenv('NVIM', old_nvim)
+    end)
+  end)
+
+  function vim_getenv(name)
+    local intPtr = ffi.new('int[1]')
+    intPtr[0] = 0;
+    local rval = env.vim_getenv((to_cstr(name)), intPtr)
+    if rval == NULL then
+      return NULL
+    elseif intPtr[0] ~= 0 then
+      return internalize(rval)
+    else
+      return ffi.string(rval)
+    end
+  end
+
+  describe('vim_getenv', function()
+    it('converts $VIMRUNTIME as $NVIMRUNTIME', function()
+      eq(nil, os_getenv('VIMRUNTIME'))
+      neq(nil, os_getenv('NVIMRUNTIME'))
+      neq(nil, vim_getenv('VIMRUNTIME'))
+      eq(vim_getenv('NVIMRUNTIME'), vim_getenv('VIMRUNTIME'))
+    end)
+
+    it('converts $VIM as $NVIM', function()
+      eq(nil, os_getenv('VIM'))
+      neq(nil, os_getenv('NVIM'))
+      neq(nil, vim_getenv('VIM'))
+      eq(vim_getenv('NVIM'), vim_getenv('VIM'))
+    end)
+  end)
+
 end)
