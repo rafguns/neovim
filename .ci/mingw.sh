@@ -1,5 +1,6 @@
 . "$CI_SCRIPTS/common.sh"
 
+
 sudo apt-get install binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686 wine
 
 # Build third-party deps
