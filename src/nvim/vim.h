@@ -16,7 +16,7 @@
 /* Some defines from the old feature.h */
 #define SESSION_FILE "Session.vim"
 #define MAX_MSG_HIST_LEN 200
-#define SYS_OPTWIN_FILE "$VIMRUNTIME/optwin.vim"
+#define SYS_OPTWIN_FILE "$NVIMRUNTIME/optwin.vim"
 #define RUNTIME_DIRNAME "runtime"
 /* end */
 

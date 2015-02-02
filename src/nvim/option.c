@@ -3838,13 +3838,13 @@ did_set_string_option (
   }
   /* 'helpfile' */
   else if (varp == &p_hf) {
-    /* May compute new values for $VIM and $VIMRUNTIME */
+    /* May compute new values for $NVIM and $NVIMRUNTIME */
     if (didset_vim) {
-      vim_setenv((char_u *)"VIM", (char_u *)"");
+      vim_setenv((char_u *)"NVIM", (char_u *)"");
       didset_vim = FALSE;
     }
     if (didset_vimruntime) {
-      vim_setenv((char_u *)"VIMRUNTIME", (char_u *)"");
+      vim_setenv((char_u *)"NVIMRUNTIME", (char_u *)"");
       didset_vimruntime = FALSE;
     }
   }

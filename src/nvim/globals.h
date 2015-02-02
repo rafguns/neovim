@@ -242,8 +242,8 @@ EXTERN int intr_char INIT(= 0);             /* extra interrupt character */
 EXTERN int ex_keep_indent INIT(= FALSE);      /* getexmodeline(): keep indent */
 EXTERN int vgetc_busy INIT(= 0);            /* when inside vgetc() then > 0 */
 
-EXTERN int didset_vim INIT(= FALSE);        /* did set $VIM ourselves */
-EXTERN int didset_vimruntime INIT(= FALSE);        /* idem for $VIMRUNTIME */
+EXTERN int didset_vim INIT(= FALSE);        /* did set $NVIM ourselves */
+EXTERN int didset_vimruntime INIT(= FALSE);        /* idem for $NVIMRUNTIME */
 
 /*
  * Lines left before a "more" message.	Ex mode needs to be able to reset this

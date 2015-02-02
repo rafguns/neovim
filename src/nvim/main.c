@@ -852,7 +852,7 @@ static void init_locale(void)
 
     /* expand_env() doesn't work yet, because chartab[] is not initialized
      * yet, call vim_getenv() directly */
-    p = vim_getenv((char_u *)"VIMRUNTIME", &mustfree);
+    p = vim_getenv((char_u *)"NVIMRUNTIME", &mustfree);
     if (p != NULL && *p != NUL) {
       vim_snprintf((char *)NameBuff, MAXPATHL, "%s/lang", p);
       bindtextdomain(VIMPACKAGE, (char *)NameBuff);
@@ -1887,10 +1887,10 @@ static void source_startup_scripts(mparm_T *parmp)
      * Try to read initialization commands from the following places:
      * - environment variable VIMINIT
      * - user vimrc file (~/.vimrc)
-     * - second user vimrc file ($VIM/.vimrc for Dos)
+     * - second user vimrc file ($NVIM/.vimrc for Dos)
      * - environment variable EXINIT
      * - user exrc file (~/.exrc)
-     * - second user exrc file ($VIM/.exrc for Dos)
+     * - second user exrc file ($NVIM/.exrc for Dos)
      * The first that exists is used, the rest is ignored.
      */
     if (process_env((char_u *)"VIMINIT", TRUE) != OK) {

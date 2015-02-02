@@ -1758,10 +1758,10 @@ ex_let_one (
           vim_setenv(name, p);
           if (STRICMP(name, "HOME") == 0)
             init_homedir();
-          else if (didset_vim && STRICMP(name, "VIM") == 0)
+          else if (didset_vim && (STRICMP(name, "VIM") == 0 || STRICMP(name, "NVIM") == 0))
             didset_vim = FALSE;
           else if (didset_vimruntime
-                   && STRICMP(name, "VIMRUNTIME") == 0)
+                   && (STRICMP(name, "VIMRUNTIME") == 0 || STRICMP(name, "NVIMRUNTIME")))
             didset_vimruntime = FALSE;
           arg_end = arg;
         }
@@ -6326,7 +6326,7 @@ static int get_env_tv(char_u **arg, typval_T *rettv, int evaluate)
         free(string);
       }
 
-      // Next try expanding things like $VIM and ${HOME}.
+      // Next try expanding things like $NVIM and ${HOME}.
       string = expand_env_save(name - 1);
       if (string != NULL && *string == '$') {
         free(string);
@@ -8157,7 +8157,7 @@ static void f_exists(typval_T *argvars, typval_T *rettv)
     if (os_getenv((char *)(p + 1)) != NULL)
       n = TRUE;
     else {
-      /* try expanding things like $VIM and ${HOME} */
+      /* try expanding things like $NVIM and ${HOME} */
       p = expand_env_save(p);
       if (p != NULL && *p != '$')
         n = TRUE;
@@ -18309,7 +18309,7 @@ script_autoload (
       tofree = NULL;
     }
 
-    /* Try loading the package from $VIMRUNTIME/autoload/<name>.vim */
+    /* Try loading the package from $NVIMRUNTIME/autoload/<name>.vim */
     if (source_runtime(scriptname, FALSE) == OK)
       ret = TRUE;
   }

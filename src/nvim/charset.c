@@ -1873,7 +1873,7 @@ int hexhex2nr(char_u *p)
 /// backslash is not a normal file name character.
 /// '$' is a valid file name character, we don't remove the backslash before
 /// it.  This means it is not possible to use an environment variable after a
-/// backslash.  "C:\$VIM\doc" is taken literally, only "$VIM\doc" works.
+/// backslash.  "C:\$NVIM\doc" is taken literally, only "$NVIM\doc" works.
 /// Although "\ name" is valid, the backslash in "Program\ files" must be
 /// removed.  Assume a file name doesn't start with a space.
 /// For multi-byte names, never remove a backslash before a non-ascii

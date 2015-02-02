@@ -2907,7 +2907,7 @@ expand_env_esc (
 
 /*
  * Vim's version of getenv().
- * Special handling of $HOME, $VIM and $VIMRUNTIME.
+ * Special handling of $HOME, $VIM/$NVIM, $VIMRUNTIME/$NVIMRUNTIME.
  * Also does ACP to 'enc' conversion for Win32.
  * "mustfree" is set to TRUE when returned is allocated, it must be
  * initialized to FALSE by the caller.
@@ -2916,10 +2916,16 @@ char_u *vim_getenv(char_u *name, int *mustfree)
 {
   char_u      *p;
   char_u      *pend;
-  int vimruntime;
+  bool env_vimruntime = (STRCMP(name, "VIMRUNTIME") == 0 || STRCMP(name, "NVIMRUNTIME") == 0);
+  bool env_vim = (STRCMP(name, "VIM") == 0 || STRCMP(name, "NVIM") == 0);
 
-
-  p = (char_u *)os_getenv((char *)name);
+  if (env_vimruntime) {
+    p = (char_u *)os_getenv("NVIMRUNTIME");
+  } else if (env_vim) {
+    p = (char_u *)os_getenv("NVIM");
+  } else {
+    p = (char_u *)os_getenv((char *)name);
+  }
   if (p != NULL && *p == NUL)       /* empty is the same as not set */
     p = NULL;
 
@@ -2927,20 +2933,19 @@ char_u *vim_getenv(char_u *name, int *mustfree)
     return p;
   }
 
-  vimruntime = (STRCMP(name, "VIMRUNTIME") == 0);
-  if (!vimruntime && STRCMP(name, "VIM") != 0)
+  if (!env_vimruntime && !env_vim)
     return NULL;
 
   /*
-   * When expanding $VIMRUNTIME fails, try using $VIM/vim<version> or $VIM.
+   * When expanding $NVIMRUNTIME fails, try using $NVIM/vim<version> or $NVIM.
    * Don't do this when default_vimruntime_dir is non-empty.
    */
-  if (vimruntime
+  if (env_vimruntime
 #ifdef HAVE_PATHDEF
       && *default_vimruntime_dir == NUL
 #endif
       ) {
-    p = (char_u *)os_getenv("VIM");
+    p = (char_u *)os_getenv("NVIM");
     if (p != NULL && *p == NUL)             /* empty is the same as not set */
       p = NULL;
     if (p != NULL) {
@@ -2948,13 +2953,13 @@ char_u *vim_getenv(char_u *name, int *mustfree)
       if (p != NULL)
         *mustfree = TRUE;
       else
-        p = (char_u *)os_getenv("VIM");
+        p = (char_u *)os_getenv("NVIM");
 
     }
   }
 
   /*
-   * When expanding $VIM or $VIMRUNTIME fails, try using:
+   * When expanding $NVIM or $NVIMRUNTIME fails, try using:
    * - the directory name from 'helpfile' (unless it contains '$')
    * - the executable name from argv[0]
    */
@@ -2982,8 +2987,8 @@ char_u *vim_getenv(char_u *name, int *mustfree)
         pend = remove_tail(p, pend, (char_u *)"src");
 #endif
 
-      /* for $VIM, remove "runtime/" or "vim54/", if present */
-      if (!vimruntime) {
+      /* for $NVIM, remove "runtime/" or "vim54/", if present */
+      if (!env_vimruntime) {
         pend = remove_tail(p, pend, (char_u *)RUNTIME_DIRNAME);
         pend = remove_tail(p, pend, (char_u *)VIM_VERSION_NODOT);
       }
@@ -3003,7 +3008,7 @@ char_u *vim_getenv(char_u *name, int *mustfree)
       } else {
 #ifdef USE_EXE_NAME
         /* may add "/vim54" or "/runtime" if it exists */
-        if (vimruntime && (pend = vim_version_dir(p)) != NULL) {
+        if (env_vimruntime && (pend = vim_version_dir(p)) != NULL) {
           free(p);
           p = pend;
         }
@@ -3018,11 +3023,11 @@ char_u *vim_getenv(char_u *name, int *mustfree)
    * default_vimruntime_dir */
   if (p == NULL) {
     /* Only use default_vimruntime_dir when it is not empty */
-    if (vimruntime && *default_vimruntime_dir != NUL) {
+    if (env_vimruntime && *default_vimruntime_dir != NUL) {
       p = default_vimruntime_dir;
       *mustfree = FALSE;
     } else if (*default_vim_dir != NUL) {
-      if (vimruntime && (p = vim_version_dir(default_vim_dir)) != NULL)
+      if (env_vimruntime && (p = vim_version_dir(default_vim_dir)) != NULL)
         *mustfree = TRUE;
       else {
         p = default_vim_dir;
@@ -3037,11 +3042,11 @@ char_u *vim_getenv(char_u *name, int *mustfree)
    * next time, and others can also use it (e.g. Perl).
    */
   if (p != NULL) {
-    if (vimruntime) {
-      vim_setenv((char_u *)"VIMRUNTIME", p);
+    if (env_vimruntime) {
+      vim_setenv((char_u *)"NVIMRUNTIME", p);
       didset_vimruntime = TRUE;
     } else {
-      vim_setenv((char_u *)"VIM", p);
+      vim_setenv((char_u *)"NVIM", p);
       didset_vim = TRUE;
     }
   }
@@ -3090,12 +3095,20 @@ static char_u *remove_tail(char_u *p, char_u *pend, char_u *name)
  */
 void vim_setenv(char_u *name, char_u *val)
 {
-  os_setenv((char *)name, (char *)val, 1);
+  bool vim_runtime = (STRICMP(name, "VIMRUNTIME") == 0 || STRICMP(name, "NVIMRUNTIME") == 0);
+  bool env_vim = (STRICMP(name, "VIM") == 0 || STRICMP(name, "NVIM") == 0);
+  if (vim_runtime) {
+    os_setenv("NVIMRUNTIME", (char *)val, 1);
+  } else if (env_vim) {
+    os_setenv("NVIM", (char *)val, 1);
+  } else {
+    os_setenv((char *)name, (char *)val, 1);
+  }
   /*
-   * When setting $VIMRUNTIME adjust the directory to find message
-   * translations to $VIMRUNTIME/lang.
+   * When setting $NVIMRUNTIME adjust the directory to find message
+   * translations to $NVIMRUNTIME/lang.
    */
-  if (*val != NUL && STRICMP(name, "VIMRUNTIME") == 0) {
+  if (*val != NUL && vim_runtime) {
     char_u  *buf = concat_str(val, (char_u *)"/lang");
     bindtextdomain(VIMPACKAGE, (char *)buf);
     free(buf);

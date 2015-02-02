@@ -1676,9 +1676,9 @@ static char_u *viminfo_filename(char_u *file)
 #ifdef VIMINFO_FILE2
       /* don't use $HOME when not defined (turned into "c:/"!). */
       if (os_getenv((char_u *)"HOME") == NULL) {
-        /* don't use $VIM when not available. */
-        expand_env((char_u *)"$VIM", NameBuff, MAXPATHL);
-        if (STRCMP("$VIM", NameBuff) != 0)          /* $VIM was expanded */
+        /* don't use $NVIM when not available. */
+        expand_env((char_u *)"$NVIM", NameBuff, MAXPATHL);
+        if (STRCMP("$NVIM", NameBuff) != 0)          /* $NVIM was expanded */
           file = (char_u *)VIMINFO_FILE2;
         else
           file = (char_u *)VIMINFO_FILE;
@@ -5153,12 +5153,12 @@ void fix_help_buffer(void)
         continue;
 
       /* Go through all directories in 'runtimepath', skipping
-       * $VIMRUNTIME. */
+       * $NVIMRUNTIME. */
       p = p_rtp;
       while (*p != NUL) {
         copy_option_part(&p, NameBuff, MAXPATHL, ",");
         mustfree = FALSE;
-        rt = vim_getenv((char_u *)"VIMRUNTIME", &mustfree);
+        rt = vim_getenv((char_u *)"NVIMRUNTIME", &mustfree);
         if (path_full_compare(rt, NameBuff, FALSE) != kEqualFiles) {
           int fcount;
           char_u      **fnames;
@@ -5474,11 +5474,11 @@ helptags_one (
   }
 
   /*
-   * If using the "++t" argument or generating tags for "$VIMRUNTIME/doc"
+   * If using the "++t" argument or generating tags for "$NVIMRUNTIME/doc"
    * add the "help-tags" tag.
    */
   ga_init(&ga, (int)sizeof(char_u *), 100);
-  if (add_help_tags || path_full_compare((char_u *)"$VIMRUNTIME/doc",
+  if (add_help_tags || path_full_compare((char_u *)"$NVIMRUNTIME/doc",
           dir, FALSE) == kEqualFiles) {
     s = xmalloc(18 + STRLEN(tagfname));
     sprintf((char *)s, "help-tags\t%s\t1\n", tagfname);

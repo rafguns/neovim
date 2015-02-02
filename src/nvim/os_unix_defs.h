@@ -99,13 +99,13 @@
  * Unix system-dependent file names
  */
 #ifndef SYS_VIMRC_FILE
-# define SYS_VIMRC_FILE "$VIM/nvimrc"
+# define SYS_VIMRC_FILE "$NVIM/nvimrc"
 #endif
 #ifndef SYS_GVIMRC_FILE
-# define SYS_GVIMRC_FILE "$VIM/ngvimrc"
+# define SYS_GVIMRC_FILE "$NVIM/ngvimrc"
 #endif
 #ifndef DFLT_HELPFILE
-# define DFLT_HELPFILE  "$VIMRUNTIME/doc/help.txt"
+# define DFLT_HELPFILE  "$NVIMRUNTIME/doc/help.txt"
 #endif
 #ifndef FILETYPE_FILE
 # define FILETYPE_FILE  "filetype.vim"
@@ -126,7 +126,7 @@
 # define INDOFF_FILE    "indoff.vim"
 #endif
 #ifndef SYS_MENU_FILE
-# define SYS_MENU_FILE  "$VIMRUNTIME/menu.vim"
+# define SYS_MENU_FILE  "$NVIMRUNTIME/menu.vim"
 #endif
 
 #ifndef USR_EXRC_FILE
@@ -167,7 +167,7 @@
 
 
 #ifndef SYNTAX_FNAME
-# define SYNTAX_FNAME   "$VIMRUNTIME/syntax/%s.vim"
+# define SYNTAX_FNAME   "$NVIMRUNTIME/syntax/%s.vim"
 #endif
 
 #ifndef DFLT_BDIR
@@ -185,11 +185,11 @@
 #define DFLT_ERRORFILE          "errors.err"
 
 #  ifdef RUNTIME_GLOBAL
-#   define DFLT_RUNTIMEPATH     "~/.nvim," RUNTIME_GLOBAL ",$VIMRUNTIME," \
+#   define DFLT_RUNTIMEPATH     "~/.nvim," RUNTIME_GLOBAL ",$NVIMRUNTIME," \
   RUNTIME_GLOBAL "/after,~/.nvim/after"
 #  else
 #   define DFLT_RUNTIMEPATH \
-  "~/.nvim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,~/.nvim/after"
+  "~/.nvim,$NVIM/vimfiles,$NVIMRUNTIME,$NVIM/vimfiles/after,~/.nvim/after"
 #  endif
 
 /* Special wildcards that need to be handled by the shell */

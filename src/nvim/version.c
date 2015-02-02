@@ -955,13 +955,13 @@ void list_version(void)
 #ifdef HAVE_PATHDEF
 
   if (*default_vim_dir != NUL) {
-    version_msg(_("  fall-back for $VIM: \""));
+    version_msg(_("  fall-back for $NVIM: \""));
     version_msg((char *)default_vim_dir);
     version_msg("\"\n");
   }
 
   if (*default_vimruntime_dir != NUL) {
-    version_msg(_(" f-b for $VIMRUNTIME: \""));
+    version_msg(_(" f-b for $NVIMRUNTIME: \""));
     version_msg((char *)default_vimruntime_dir);
     version_msg("\"\n");
   }

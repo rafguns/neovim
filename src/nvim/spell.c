@@ -7096,7 +7096,7 @@ void ex_mkspell(exarg_T *eap)
     arg = skipwhite(arg + 6);
   }
 
-  // Expand all the remaining arguments (e.g., $VIMRUNTIME).
+  // Expand all the remaining arguments (e.g., $NVIMRUNTIME).
   if (get_arglist_exp(arg, &fcount, &fnames, false) == OK) {
     mkspell(fcount, fnames, ascii, eap->forceit, false);
     FreeWild(fcount, fnames);
