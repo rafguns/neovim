@@ -11,7 +11,9 @@ set(MINGW_TRIPLET i686-w64-mingw32)
 #set(MINGW_TRIPLET x86_64-w64-mingw32)
 
 # The location of your toolchain sys-root
-set(MINGW_PREFIX_PATH /usr/${MINGW_TRIPLET}/sys-root)
+set(MINGW_PREFIX_PATH /opt/mingw32/${MINGW_TRIPLET}/)
+# or sometimes like this
+#set(MINGW_PREFIX_PATH /usr/${MINGW_TRIPLET}/sys-root)
 
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Windows)
